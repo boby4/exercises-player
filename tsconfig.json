@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "commonjs",
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist/",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "rootDir": ".",
+    "jsx": "preserve",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["node_modules/@types"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["ES2017", "DOM"]
+  },
+  "include": ["src/**/*", "global.d.ts", "config/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,10 @@
+{
+  "extends": ["taro/vue3"],
+  "rules": {
+    "vue/html-indent": "off",
+    "vue/singleline-html-element-content-newline": "off",
+    "vue/multiline-html-element-content-newline": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-console": "off"
+  }
+}

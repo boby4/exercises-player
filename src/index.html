@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>ExercisesPlayer</title>
+  <style>
+    html { background: #e0e0e0; }
+    body { max-width: 500px; margin: 0 auto; background: #f8f8f8; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+  </style>
+  <script><%= htmlWebpackPlugin.options.script %></script>
+  <script>
+    // Override Taro rem: scale for 500px body width on desktop
+    !function(){
+      var MAX_W = 500, designW = 750, maxRoot = 60, minRoot = 20;
+      // rootVal=60 ensures 1:1 pixel mapping: 36px design -> 0.9rem -> 36px on 500px body
+      var rootVal = 60;
+      function recalc(){
+        var w = Math.min(document.documentElement.clientWidth, MAX_W);
+        var x = rootVal * w / designW;
+        document.documentElement.style.fontSize = (x >= maxRoot ? maxRoot : x <= minRoot ? minRoot : x) + 'px';
+      }
+      recalc();
+      window.addEventListener('resize', recalc);
+    }();
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+</body>
+</html>
