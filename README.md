@@ -2,6 +2,8 @@
 
 基于 [ExerciseDB](https://exercisedb.io/) 数据集构建的离线健身动作库应用，支持多端（H5 / 微信小程序）运行。
 
+> 🌐 **线上地址**：[https://exercises-player.vercel.app](https://exercises-player.vercel.app)
+
 ## ✨ 功能特性
 
 ### 🏠 首页
