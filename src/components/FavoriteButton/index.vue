@@ -25,7 +25,7 @@ function handleTap(): void {
 }
 </script>
 
-<style scoped>
+<style>
 .fav-btn {
   padding: 6px;
 }

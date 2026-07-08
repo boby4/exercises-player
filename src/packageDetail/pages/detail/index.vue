@@ -1,10 +1,11 @@
 <template>
-  <view class="page" v-if="exercise">
+  <view class="detail-page" v-if="exercise">
     <!-- GIF 展示 -->
     <view class="gif-section">
       <image
         v-if="gifSrc"
         :src="gifSrc"
+        mode="widthFix"
         class="gif-image"
       />
       <view v-else class="gif-placeholder">
@@ -72,13 +73,13 @@
       <!-- 动作说明 -->
       <view class="instructions-section">
         <text class="section-title">动作说明</text>
-        <text class="instructions-text">{{ exercise.instructions.zh || exercise.instructions.en }}</text>
+        <text class="instructions-text">{{ exercise.instructions?.zh || '暂无说明' }}</text>
       </view>
 
       <!-- 推荐动作 -->
       <view class="related-section" v-if="relatedExercises.length > 0">
         <text class="section-title">推荐动作</text>
-        <scroll-view scroll-x class="related-scroll">
+        <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="related-scroll">
           <view class="related-list">
             <view v-for="item in relatedExercises" :key="item.id" class="related-item">
               <ExerciseCard :exercise="item" />
@@ -103,7 +104,8 @@ import Taro, { useRouter } from '@tarojs/taro'
 import type { Exercise } from '@/types/exercise'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import type { BodyPart } from '@/types/exercise'
-import { getExerciseById, getRelatedExercises, getGifUrl } from '@/utils/data'
+import { getRelatedExercises, getGifUrl } from '@/utils/data'
+import { getFullExerciseById } from '../../utils/data-full'
 import { useExerciseStore } from '@/store/exercise'
 import FavoriteButton from '@/components/FavoriteButton/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
@@ -150,7 +152,7 @@ function startTraining(): void {
 onMounted(() => {
   const id = router.params.id
   if (id) {
-    exercise.value = getExerciseById(id) || null
+    exercise.value = getFullExerciseById(id) || null
     exerciseStore.addRecentViewed(id)
 
     if (exercise.value) {
@@ -160,8 +162,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.page {
+<style>
+.detail-page {
   min-height: 100vh;
   background: #f8f8f8;
   padding-bottom: 100px;
@@ -178,23 +180,21 @@ onMounted(() => {
 
 .gif-image {
   width: 100%;
-  max-height: 400px;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
   display: block;
   margin: 0 auto;
+  object-fit: contain;
 }
 
 .gif-image :deep(img) {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   object-fit: contain;
 }
 
 .gif-placeholder {
   width: 100%;
-  max-height: 400px;
-  aspect-ratio: 1 / 1;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;

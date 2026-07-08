@@ -52,7 +52,7 @@ function handleClear(): void {
 }
 </script>
 
-<style scoped>
+<style>
 .search-bar {
   padding: 12px 16px 8px;
 }

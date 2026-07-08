@@ -46,7 +46,7 @@
 
     <!-- 动作导航条 -->
     <view class="nav-strip" v-if="exercises.length > 1">
-      <scroll-view scroll-x class="nav-strip-scroll">
+      <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="nav-strip-scroll">
         <view class="nav-strip-inner">
           <view
             v-for="(ex, idx) in exercises"
@@ -73,7 +73,7 @@
     <!-- 计时器选择 -->
     <view class="timer-section" v-if="!isRunning && !isPaused">
       <text class="timer-label">选择时长</text>
-      <scroll-view scroll-x class="timer-scroll">
+      <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="timer-scroll">
         <view class="timer-presets">
           <view
             v-for="preset in presets"
@@ -300,7 +300,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style>
 .training-page {
   min-height: 100vh;
   background: #111;

@@ -3,11 +3,13 @@ node_modules/
 
 # Build output
 dist/
+dist-weapp/
 .h5/
 .weapp/
 
 # Local GIF resources (large, use CDN instead)
 public/gifs/
+gifs-backup/
 
 # IDE
 .idea/

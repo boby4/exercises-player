@@ -61,7 +61,7 @@ function handleTap(): void {
 }
 </script>
 
-<style scoped>
+<style>
 .exercise-card {
   width: 100%;
   border-radius: 20px;

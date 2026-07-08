@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="search-page">
     <SearchBar
       v-model="keyword"
       @search="doSearch"
@@ -8,31 +8,39 @@
     />
 
     <!-- 筛选标签 -->
-    <view class="filter-section">
-      <scroll-view scroll-x class="filter-scroll">
-        <view class="filter-group">
-          <Tag
-            v-for="bp in exerciseStore.bodyParts"
-            :key="bp"
-            :label="getBodyPartLabel(bp)"
-            :selected="selectedBodyPart === bp"
-            @tap="toggleBodyPart(bp)"
-          />
-        </view>
-      </scroll-view>
-
-      <scroll-view scroll-x class="filter-scroll">
-        <view class="filter-group">
-          <Tag
-            v-for="eq in exerciseStore.equipmentList"
-            :key="eq"
-            :label="getEquipmentLabel(eq)"
-            :selected="selectedEquipment === eq"
-            @tap="toggleEquipment(eq)"
-          />
-        </view>
-      </scroll-view>
+    <view class="search-filter-section">
+      <view class="search-filter-header">
+        <text class="search-filter-title">肌群筛选</text>
+      </view>
     </view>
+    <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="search-filter-scroll">
+      <view class="search-filter-group">
+        <Tag
+          v-for="bp in exerciseStore.bodyParts"
+          :key="bp"
+          :label="getBodyPartLabel(bp)"
+          :selected="selectedBodyPart === bp"
+          @tap="toggleBodyPart(bp)"
+        />
+      </view>
+    </scroll-view>
+
+    <view class="search-filter-section">
+      <view class="search-filter-header">
+        <text class="search-filter-title">器械筛选</text>
+      </view>
+    </view>
+    <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="search-filter-scroll">
+      <view class="search-filter-group">
+        <Tag
+          v-for="eq in exerciseStore.equipmentList"
+          :key="eq"
+          :label="getEquipmentLabel(eq)"
+          :selected="selectedEquipment === eq"
+          @tap="toggleEquipment(eq)"
+        />
+      </view>
+    </scroll-view>
 
     <!-- 结果统计 -->
     <view v-if="hasFilters" class="result-header">
@@ -45,7 +53,8 @@
 
     <!-- 结果列表 -->
     <scroll-view
-      scroll-y
+      :scroll-y="true"
+      v-if="hasFilters"
       class="result-list"
       :style="{ height: listHeight + 'px' }"
       @scrolltolower="loadMore"
@@ -163,26 +172,39 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.page {
+<style>
+.search-page {
   min-height: 100vh;
   background: #f8f8f8;
 }
 
-.filter-section {
+.search-filter-section {
   padding: 0 16px;
+  margin-bottom: 4px;
+}
+
+.search-filter-header {
+  display: flex;
+  align-items: center;
   margin-bottom: 8px;
 }
 
-.filter-scroll {
-  white-space: nowrap;
+.search-filter-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.search-filter-scroll {
+  width: 100%;
   margin-bottom: 8px;
 }
 
-.filter-group {
-  display: inline-flex;
+.search-filter-group {
+  display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
-  padding-right: 16px;
+  padding: 0 16px;
 }
 
 .result-header {
@@ -235,7 +257,7 @@ onMounted(() => {
 }
 
 .result-item {
-  width: calc((100% - 12px) / 2);
+  width: 48%;
   min-width: 0;
   flex-shrink: 0;
 }

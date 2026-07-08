@@ -1,11 +1,11 @@
 <template>
-  <view class="page" v-if="plan">
+  <view class="plan-detail-page" v-if="plan">
     <!-- 计划头部信息 -->
     <view class="plan-header">
       <view class="plan-type-badge">
         <text class="plan-type-text">{{ typeLabel }}</text>
       </view>
-      <text class="plan-name">{{ plan.name }}</text>
+      <text class="plan-detail-name">{{ plan.name }}</text>
       <view class="plan-meta">
         <text class="meta-count">{{ plan.exerciseIds.length }} 个动作</text>
         <text class="meta-dot">·</text>
@@ -90,7 +90,7 @@
           placeholder="列表仅展示50个动作，请按动作名称进行搜索"
         />
       </view>
-      <scroll-view scroll-y class="modal-exercise-list">
+      <scroll-view :scroll-y="true" class="modal-exercise-list">
         <view
           v-for="ex in filteredAllExercises"
           :key="ex.id"
@@ -263,8 +263,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.page {
+<style>
+.plan-detail-page {
   min-height: 100vh;
   background: #f5f6f8;
   padding-bottom: 80px;
@@ -303,7 +303,7 @@ onMounted(() => {
   line-height: 1.2;
 }
 
-.plan-name {
+.plan-detail-name {
   font-size: 20px;
   font-weight: 700;
   color: #1a1a1a;

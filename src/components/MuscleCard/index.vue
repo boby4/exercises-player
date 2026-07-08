@@ -63,7 +63,7 @@ function handleTap(): void {
 }
 </script>
 
-<style scoped>
+<style>
 .muscle-card {
   display: flex;
   align-items: center;

@@ -21,7 +21,7 @@ export default defineConfig(async (merge) => {
   const baseConfig: UserConfigExport = {
     projectName: 'exercises-player',
     date: '2024-1-1',
-    designWidth: 750,
+    designWidth: 375,
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,
@@ -29,7 +29,7 @@ export default defineConfig(async (merge) => {
       828: 1.81 / 2,
     },
     sourceRoot: 'src',
-    outputRoot: `dist`,
+    outputRoot: isH5 ? 'dist' : `dist-${process.env.TARO_ENV}`,
     plugins: [
       '@tarojs/plugin-platform-weapp',
       '@tarojs/plugin-platform-h5',

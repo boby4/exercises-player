@@ -25,7 +25,7 @@ function handleTap(): void {
 }
 </script>
 
-<style scoped>
+<style>
 .tag-wrap {
   display: inline-flex;
   align-items: center;

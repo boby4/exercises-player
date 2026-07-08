@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="favorites-page">
     <SearchBar v-model="searchKeyword" @search="handleSearch" @clear="handleClear" placeholder="搜索收藏..." />
 
     <view v-if="displayList.length > 0" class="fav-list">
@@ -50,8 +50,8 @@ function handleClear(): void {
 }
 </script>
 
-<style scoped>
-.page {
+<style>
+.favorites-page {
   min-height: 100vh;
   background: #f8f8f8;
   padding-bottom: 20px;
@@ -65,7 +65,7 @@ function handleClear(): void {
 }
 
 .fav-item {
-  width: calc(50% - 6px);
+  width: 48%;
 }
 
 .empty-state {

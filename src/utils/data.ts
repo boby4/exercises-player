@@ -1,6 +1,8 @@
 import type { Exercise, FilterOptions } from '@/types/exercise'
-import exercisesRaw from '@/assets/data/exercises.json'
+import exercisesRaw from '@/assets/data/exercises-index.json'
 
+// 轻量索引：仅包含列表/筛选所需字段（~253KB）
+// 完整数据（instruction_steps等）由分包 data-full.ts 提供
 const exercises = exercisesRaw as Exercise[]
 
 let cachedBodyParts: string[] = []
@@ -59,8 +61,7 @@ export function filterExercises(filters: FilterOptions): Exercise[] {
         e.name.toLowerCase().includes(kw) ||
         e.target.toLowerCase().includes(kw) ||
         e.body_part.toLowerCase().includes(kw) ||
-        e.equipment.toLowerCase().includes(kw) ||
-        e.muscle_group.toLowerCase().includes(kw)
+        e.equipment.toLowerCase().includes(kw)
     )
   }
 
@@ -111,7 +112,6 @@ export function getEquipmentCount(): Record<string, number> {
 }
 
 export function getGifUrl(exercise: Exercise): string {
-  // Use ExerciseDB CDN URL for deployment (avoid bundling 120MB+ GIFs)
   if (exercise.gif_url) return exercise.gif_url
   if (exercise.media_id) {
     return `https://static.exercisedb.dev/media/${exercise.media_id}.gif`

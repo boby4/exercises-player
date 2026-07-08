@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="profile-page">
     <!-- 统计卡片 -->
     <view class="stats-hero">
       <view class="stats-row">
@@ -127,8 +127,8 @@ function clearAllData(): void {
 }
 </script>
 
-<style scoped>
-.page {
+<style>
+.profile-page {
   min-height: 100vh;
   background: #f8f8f8;
 }

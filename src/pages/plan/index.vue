@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="plan-page">
     <!-- 创建计划按钮 -->
     <view class="create-section">
       <view class="create-btn" @tap="showCreateModal = true">
@@ -9,7 +9,7 @@
     </view>
 
     <!-- 计划类型选择 -->
-    <scroll-view scroll-x class="type-scroll">
+    <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="type-scroll">
       <view class="type-inner">
         <view class="type-list">
           <view
@@ -64,7 +64,7 @@
             </view>
           </view>
           <view class="plan-footer">
-            <view class="action-btn start-btn" @tap.stop="startPlanTraining(plan.id)">
+            <view class="action-btn plan-start-btn" @tap.stop="startPlanTraining(plan.id)">
               <text class="action-label">&#x25B6; 开始训练</text>
             </view>
             <view class="action-btn del-btn" @tap.stop="deletePlan(plan.id)">
@@ -243,8 +243,8 @@ function deletePlan(planId: string): void {
 }
 </script>
 
-<style scoped>
-.page {
+<style>
+.plan-page {
   min-height: 100vh;
   background: #f5f6f8;
   padding-bottom: 20px;
@@ -280,7 +280,7 @@ function deletePlan(planId: string): void {
 }
 
 .type-scroll {
-  white-space: nowrap;
+  width: 100%;
   margin-bottom: 12px;
 }
 
@@ -289,7 +289,8 @@ function deletePlan(planId: string): void {
 }
 
 .type-list {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
   padding-right: 16px;
 }
@@ -514,7 +515,7 @@ function deletePlan(planId: string): void {
   flex-shrink: 0;
 }
 
-.start-btn {
+.plan-start-btn {
   flex: 1;
   height: 30px;
   background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
