@@ -10,14 +10,13 @@
   </style>
   <script><%= htmlWebpackPlugin.options.script %></script>
   <script>
-    // Taro designWidth=375: rootVal=75, designW=750 → 1:1 pixel mapping on any screen
+    // Match Taro pxtransform: root = 20 * clientWidth / 375, cap at 500px body
     !function(){
-      var MAX_W = 500, designW = 750, maxRoot = 40, minRoot = 20;
-      var rootVal = 75;
+      var MAX_W = 500;
       function recalc(){
         var w = Math.min(document.documentElement.clientWidth, MAX_W);
-        var x = rootVal * w / designW;
-        document.documentElement.style.fontSize = (x >= maxRoot ? maxRoot : x <= minRoot ? minRoot : x) + 'px';
+        var x = 20 * w / 375;
+        document.documentElement.style.fontSize = (x >= 40 ? 40 : x <= 20 ? 20 : x) + 'px';
       }
       recalc();
       window.addEventListener('resize', recalc);
