@@ -10,17 +10,16 @@
   </style>
   <script><%= htmlWebpackPlugin.options.script %></script>
   <script>
-    // Match production scaling: rootVal=75, designW=750
+    // Must match Taro runtime: 20 * w / 375
     !function(){
-      var MAX_W = 500, designW = 750, maxRoot = 60, minRoot = 20;
-      var rootVal = 75;
+      var el = document.documentElement;
       function recalc(){
-        var w = Math.min(document.documentElement.clientWidth, MAX_W);
-        var x = rootVal * w / designW;
-        document.documentElement.style.fontSize = (x >= maxRoot ? maxRoot : x <= minRoot ? minRoot : x) + 'px';
+        var w = Math.min(el.clientWidth, 500);
+        var x = 20 * w / 375;
+        el.style.fontSize = (x >= 40 ? 40 : x <= 20 ? 20 : x) + 'px';
       }
       recalc();
-      new MutationObserver(recalc).observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+      new MutationObserver(recalc).observe(el, { attributes: true, attributeFilter: ['style'] });
       window.addEventListener('resize', recalc);
     }();
   </script>
