@@ -153,6 +153,7 @@ const topEquipment = computed(() => {
 })
 
 function goSearch(val: string): void {
+  exerciseStore.setPendingKeyword(val)
   Taro.switchTab({ url: '/pages/search/index' })
 }
 
@@ -169,9 +170,8 @@ function refreshRecommend(): void {
 }
 
 function filterByEquipment(equipment: string): void {
-  Taro.navigateTo({
-    url: `/pages/search/index?filter=equipment&value=${encodeURIComponent(equipment)}`,
-  })
+  exerciseStore.setPendingFilter('equipment', equipment)
+  Taro.switchTab({ url: '/pages/search/index' })
 }
 
 usePullDownRefresh(() => {

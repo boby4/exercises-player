@@ -10,11 +10,10 @@
   </style>
   <script><%= htmlWebpackPlugin.options.script %></script>
   <script>
-    // Override Taro rem: scale for 500px body width on desktop
+    // Taro designWidth=375: rootVal=75, designW=750 → 1:1 pixel mapping on any screen
     !function(){
-      var MAX_W = 500, designW = 750, maxRoot = 60, minRoot = 20;
-      // rootVal=60 ensures 1:1 pixel mapping: 36px design -> 0.9rem -> 36px on 500px body
-      var rootVal = 60;
+      var MAX_W = 500, designW = 750, maxRoot = 40, minRoot = 20;
+      var rootVal = 75;
       function recalc(){
         var w = Math.min(document.documentElement.clientWidth, MAX_W);
         var x = rootVal * w / designW;

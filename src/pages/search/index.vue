@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import Tag from '@/components/Tag/index.vue'
@@ -159,15 +159,24 @@ function loadMore(): void {
 onMounted(() => {
   const sysInfo = Taro.getSystemInfoSync()
   listHeight.value = sysInfo.windowHeight - 260
+})
 
-  // Handle deep link filter params
-  const filterType = router.params.filter
-  const filterValue = router.params.value
-  if (filterType && filterValue) {
-    const decodedValue = decodeURIComponent(filterValue)
-    if (filterType === 'bodyPart') setFilter('bodyPart', decodedValue)
-    if (filterType === 'equipment') setFilter('equipment', decodedValue)
-    if (filterType === 'target') setFilter('target', decodedValue)
+useDidShow(() => {
+  // 检查来自首页的关键词搜索
+  const kw = exerciseStore.pendingKeyword
+  if (kw) {
+    setFilter('keyword', kw)
+    exerciseStore.pendingKeyword = null
+    return
+  }
+  // 检查来自 MuscleCard 的筛选参数
+  const pending = exerciseStore.pendingFilter
+  if (pending) {
+    const { type, value } = pending
+    if (type === 'bodyPart') setFilter('bodyPart', value)
+    else if (type === 'equipment') setFilter('equipment', value)
+    else if (type === 'target') setFilter('target', value)
+    exerciseStore.pendingFilter = null
   }
 })
 </script>

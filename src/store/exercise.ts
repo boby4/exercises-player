@@ -21,6 +21,8 @@ export const useExerciseStore = defineStore('exercise', () => {
   const equipmentCounts = ref<Record<string, number>>(getEquipmentCount())
   const todayRecommendations = ref<Exercise[]>(getRandomExercises(8))
   const recentViewed = ref<string[]>([])
+  const pendingFilter = ref<{ type: string; value: string } | null>(null)
+  const pendingKeyword = ref<string | null>(null)
 
   const totalCount = computed(() => allExercises.value.length)
 
@@ -36,6 +38,16 @@ export const useExerciseStore = defineStore('exercise', () => {
     recentViewed.value = [id, ...recentViewed.value.filter((i) => i !== id)].slice(0, 20)
   }
 
+  function setPendingFilter(type: string, value: string): void {
+    pendingFilter.value = { type, value }
+    pendingKeyword.value = null
+  }
+
+  function setPendingKeyword(keyword: string): void {
+    pendingKeyword.value = keyword
+    pendingFilter.value = null
+  }
+
   return {
     allExercises,
     bodyParts,
@@ -45,9 +57,13 @@ export const useExerciseStore = defineStore('exercise', () => {
     equipmentCounts,
     todayRecommendations,
     recentViewed,
+    pendingFilter,
+    pendingKeyword,
     totalCount,
     search,
     refreshRecommendations,
     addRecentViewed,
+    setPendingFilter,
+    setPendingKeyword,
   }
 })

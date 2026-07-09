@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import Taro from '@tarojs/taro'
+import { useExerciseStore } from '@/store/exercise'
 
 interface Props {
   label: string
@@ -56,10 +57,11 @@ const ICONS: Record<string, string> = {
 const bgColor = BG_COLORS[props.value] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
 const icon = ICONS[props.value] || props.icon
 
+const exerciseStore = useExerciseStore()
+
 function handleTap(): void {
-  Taro.navigateTo({
-    url: `/pages/search/index?filter=${props.type}&value=${encodeURIComponent(props.value)}`,
-  })
+  exerciseStore.setPendingFilter(props.type, props.value)
+  Taro.switchTab({ url: '/pages/search/index' })
 }
 </script>
 
