@@ -78,7 +78,7 @@ export default defineConfig(async (merge) => {
         pxtransform: {
           enable: true,
           config: {
-            maxRootSize: 40,
+            maxRootSize: 60,
           },
         },
         autoprefixer: {

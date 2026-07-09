@@ -6,19 +6,21 @@
   <title>ExercisesPlayer</title>
   <style>
     html { background: #e0e0e0; }
-    body { max-width: 500px; margin: 0 auto; background: #f8f8f8; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+    body { max-width: 500PX; margin: 0 auto; background: #f8f8f8; min-height: 100vh; box-shadow: 0 0 30PX rgba(0,0,0,0.1); }
   </style>
   <script><%= htmlWebpackPlugin.options.script %></script>
   <script>
-    // Match Taro pxtransform: root = 20 * clientWidth / 375, cap at 500px body
+    // Match production scaling: rootVal=75, designW=750
     !function(){
-      var MAX_W = 500;
+      var MAX_W = 500, designW = 750, maxRoot = 60, minRoot = 20;
+      var rootVal = 75;
       function recalc(){
         var w = Math.min(document.documentElement.clientWidth, MAX_W);
-        var x = 20 * w / 375;
-        document.documentElement.style.fontSize = (x >= 40 ? 40 : x <= 20 ? 20 : x) + 'px';
+        var x = rootVal * w / designW;
+        document.documentElement.style.fontSize = (x >= maxRoot ? maxRoot : x <= minRoot ? minRoot : x) + 'px';
       }
       recalc();
+      new MutationObserver(recalc).observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
       window.addEventListener('resize', recalc);
     }();
   </script>
