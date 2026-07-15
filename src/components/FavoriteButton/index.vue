@@ -1,12 +1,12 @@
 <template>
   <view class="fav-btn" :class="{ active: isFav }" @tap="handleTap">
-    <text class="fav-heart">{{ isFav ? '❤️' : '🤍' }}</text>
+    <text class="fav-heart">{{ isFav ? '♥' : '♡' }}</text>
     <text class="fav-label">{{ isFav ? '已收藏' : '收藏' }}</text>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useFavoriteStore } from '@/store/favorite'
 
 interface Props {
@@ -17,12 +17,9 @@ const props = defineProps<Props>()
 
 const favStore = useFavoriteStore()
 const isFav = computed(() => favStore.isFavorite(props.exerciseId))
-const popping = ref(false)
 
 function handleTap(): void {
   favStore.toggleFavorite(props.exerciseId)
-  popping.value = true
-  setTimeout(() => (popping.value = false), 300)
 }
 </script>
 
@@ -42,13 +39,15 @@ function handleTap(): void {
 }
 
 .fav-heart {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
+  color: #ccc;
   transition: transform 0.2s;
 }
 
 .fav-btn.active .fav-heart {
-  transform: scale(1.15);
+  color: #ef5350;
+  transform: scale(1.2);
 }
 
 .fav-label {
