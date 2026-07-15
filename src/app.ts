@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import 'uno.css'
 import './app.scss'
+import { initCloud, testCloudWrite } from '@/utils/cloud'
 
 // H5 rem scaling: match Taro runtime formula 20 * w / 375
 if (process.env.TARO_ENV === 'h5') {
@@ -17,6 +18,11 @@ if (process.env.TARO_ENV === 'h5') {
 }
 
 const App = createApp({
+  onLaunch() {
+    initCloud()
+    // Expose test function to console
+    ;(globalThis as any).testCloud = testCloudWrite
+  },
   onShow() {
     console.log('App onShow')
   },

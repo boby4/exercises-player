@@ -182,6 +182,9 @@ usePullDownRefresh(() => {
 
 onMounted(() => {
   randomPicks.value = getRandomExercises(6)
+  // Sync data from cloud on mini program
+  favoriteStore.syncFromCloud()
+  planStore.syncFromCloud()
 })
 </script>
 
