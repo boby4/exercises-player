@@ -141,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
 import type { Exercise } from '@/types/exercise'
 import { getExerciseById, getExercisesByIds, getGifUrl } from '@/utils/data'
@@ -273,9 +273,44 @@ function restartTraining(): void {
   reset()
 }
 
+let wakeLock: any = null
+
+async function requestWakeLock() {
+  if (process.env.TARO_ENV === 'h5') {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await (navigator as any).wakeLock.request('screen')
+      }
+    } catch (_e) { /* ignore */ }
+  } else {
+    Taro.setKeepScreenOn({ keepScreenOn: true })
+  }
+}
+
+async function releaseWakeLock() {
+  if (wakeLock) {
+    try { await wakeLock.release() } catch (_e) { /* ignore */ }
+    wakeLock = null
+  }
+  if (process.env.TARO_ENV !== 'h5') {
+    Taro.setKeepScreenOn({ keepScreenOn: false })
+  }
+}
+
+function handleVisibilityChange() {
+  if (document.visibilityState === 'visible' && !wakeLock) {
+    requestWakeLock()
+  }
+}
+
 onMounted(() => {
   const sysInfo = Taro.getSystemInfoSync()
   statusBarHeight.value = sysInfo.statusBarHeight || 44
+
+  requestWakeLock()
+  if (process.env.TARO_ENV === 'h5') {
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+  }
 
   // Load exercises from params
   const planId = router.params.planId
@@ -296,6 +331,13 @@ onMounted(() => {
   if (exercises.value.length === 0) {
     Taro.showToast({ title: '未找到动作', icon: 'none' })
     setTimeout(() => Taro.navigateBack(), 1500)
+  }
+})
+
+onUnmounted(() => {
+  releaseWakeLock()
+  if (process.env.TARO_ENV === 'h5') {
+    document.removeEventListener('visibilitychange', handleVisibilityChange)
   }
 })
 </script>
