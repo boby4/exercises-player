@@ -34,12 +34,12 @@
             <text class="record-duration">{{ formatDuration(record.duration) }}</text>
           </view>
           <view class="record-delete" @tap="deleteRecord(record.id)">
-            <text class="delete-icon">🗑️</text>
+            <IconFont name="icon-bushui" :size="16" class="delete-icon" />
           </view>
         </view>
       </view>
       <view v-else class="empty-records">
-        <text class="empty-icon">📊</text>
+        <IconFont name="icon-tice" :size="48" class="empty-icon" />
         <text class="empty-text">暂无训练记录</text>
       </view>
     </view>
@@ -64,6 +64,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Taro from '@tarojs/taro'
+import IconFont from '@/components/IconFont/index.vue'
 import { useRecordStore } from '@/store/record'
 import { useFavoriteStore } from '@/store/favorite'
 

@@ -66,7 +66,7 @@
           </view>
         </view>
         <view v-if="displayList.length === 0 && hasFilters" class="empty-state">
-          <text class="empty-icon">&#x1F50D;</text>
+          <IconFont name="icon-jianshenqixie" :size="48" class="empty-icon" />
           <text class="empty-text">未找到匹配的动作</text>
         </view>
       </view>
@@ -74,7 +74,7 @@
 
     <!-- 无筛选时的提示 -->
     <view v-if="!hasFilters" class="hint-section">
-      <text class="hint-icon">💡</text>
+      <IconFont name="icon-jiankangshipin" :size="48" class="hint-icon" />
       <text class="hint-text">输入关键词或选择筛选条件来搜索动作</text>
       <text class="hint-sub">支持按动作名、肌群、器械搜索</text>
     </view>
@@ -87,6 +87,7 @@ import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import Tag from '@/components/Tag/index.vue'
+import IconFont from '@/components/IconFont/index.vue'
 import { useExerciseStore } from '@/store/exercise'
 import { useSearch } from '@/hooks/useSearch'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'

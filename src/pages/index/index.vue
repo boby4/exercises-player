@@ -8,7 +8,7 @@
       <view class="home-section-header">
         <text class="home-section-title">今日推荐</text>
         <view class="home-refresh-btn" @tap="refreshRecommend">
-          <text class="home-refresh-icon">🔄</text>
+          <IconFont name="icon-jishiqi" :size="14" class="home-refresh-icon" />
           <text class="home-refresh-text">换一批</text>
         </view>
       </view>
@@ -52,7 +52,7 @@
           class="home-equip-chip"
           @tap="filterByEquipment(eq.key)"
         >
-          <text class="home-equip-icon">{{ eq.icon }}</text>
+          <IconFont :name="eq.icon" :size="20" class="home-equip-icon" />
           <text class="home-equip-name">{{ eq.label }}</text>
           <text class="home-equip-count">{{ eq.count }}</text>
         </view>
@@ -99,6 +99,7 @@ import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import MuscleCard from '@/components/MuscleCard/index.vue'
+import IconFont from '@/components/IconFont/index.vue'
 import { useExerciseStore } from '@/store/exercise'
 import { useFavoriteStore } from '@/store/favorite'
 import { usePlanStore } from '@/store/plan'
@@ -115,18 +116,18 @@ const randomPicks = ref(getRandomExercises(6))
 const recommendations = computed(() => exerciseStore.todayRecommendations)
 
 const EQUIP_ICONS: Record<string, string> = {
-  'body weight': '🧘',
-  dumbbell: '🏋️',
-  cable: '🔗',
-  barbell: '🏋️‍♂️',
-  'leverage machine': '⚙️',
-  band: '🔴',
-  'smith machine': '🔩',
-  kettlebell: '🔔',
-  weighted: '⚖️',
-  'stability ball': '⚽',
-  'ez barbell': '🔧',
-  other: '📦',
+  'body weight': 'icon-fuwocheng',
+  dumbbell: 'icon-yaling',
+  cable: 'icon-jianshenqixie',
+  barbell: 'icon-jirounan',
+  'leverage machine': 'icon-jianshenqixie',
+  band: 'icon-tiaosheng',
+  'smith machine': 'icon-jianshenqixie',
+  kettlebell: 'icon-yaling',
+  weighted: 'icon-chengzhong',
+  'stability ball': 'icon-yuqie',
+  'ez barbell': 'icon-yaling',
+  other: 'icon-jianshenbao',
 }
 
 const topBodyParts = computed(() => {

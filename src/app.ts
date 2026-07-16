@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import 'uno.css'
 import './app.scss'
+import './styles/iconfont.css'
 import { initCloud, testCloudWrite } from '@/utils/cloud'
 
 // H5 rem scaling: match Taro runtime formula 20 * w / 375

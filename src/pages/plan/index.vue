@@ -19,7 +19,7 @@
             :class="{ active: selectedType === pt.key }"
             @tap="selectType(pt.key)"
           >
-            <text class="type-icon">{{ pt.icon }}</text>
+            <IconFont :name="pt.icon" :size="20" class="type-icon" />
             <text class="type-label">{{ pt.label }}</text>
           </view>
         </view>
@@ -34,7 +34,7 @@
           <view class="plan-row1">
             <text class="plan-name">{{ plan.name }}</text>
             <view class="plan-type-badge">
-              <text class="plan-type-icon">{{ getTypeIcon(plan.type) }}</text>
+              <IconFont :name="getTypeIcon(plan.type)" :size="16" class="plan-type-icon" />
               <text class="plan-type-text">{{ getTypeLabel(plan.type) }}</text>
             </view>
           </view>
@@ -76,7 +76,7 @@
     </view>
 
     <view v-else class="empty-state">
-      <text class="empty-icon">📋</text>
+      <IconFont name="icon-jianshenbao" :size="48" class="empty-icon" />
       <text class="empty-title">暂无训练计划</text>
       <text class="empty-desc">创建一个计划开始你的训练之旅</text>
     </view>
@@ -113,7 +113,7 @@
               :class="{ active: newPlanType === pt.key }"
               @tap="newPlanType = pt.key"
             >
-              <text class="modal-type-icon">{{ pt.icon }}</text>
+              <IconFont :name="pt.icon" :size="24" class="modal-type-icon" />
               <text class="modal-type-label">{{ pt.label }}</text>
             </view>
           </view>
@@ -136,6 +136,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import Taro from '@tarojs/taro'
+import IconFont from '@/components/IconFont/index.vue'
 import { usePlanStore } from '@/store/plan'
 import { useRecordStore } from '@/store/record'
 import { getExerciseById } from '@/utils/data'
@@ -158,13 +159,13 @@ watch(showCreateModal, (val) => {
 })
 
 const planTypes: Array<{ key: PlanType; label: string; icon: string }> = [
-  { key: 'push', label: 'Push', icon: '💪' },
-  { key: 'pull', label: 'Pull', icon: '🏋️' },
-  { key: 'leg', label: 'Leg', icon: '🦵' },
-  { key: 'upper', label: 'Upper', icon: '⬆️' },
-  { key: 'lower', label: 'Lower', icon: '⬇️' },
-  { key: 'fullbody', label: 'Full Body', icon: '🔥' },
-  { key: 'custom', label: '自定义', icon: '✨' },
+  { key: 'push', label: 'Push', icon: 'icon-jirounan' },
+  { key: 'pull', label: 'Pull', icon: 'icon-paobu' },
+  { key: 'leg', label: 'Leg', icon: 'icon-fuwocheng' },
+  { key: 'upper', label: 'Upper', icon: 'icon-yaling' },
+  { key: 'lower', label: 'Lower', icon: 'icon-chengzhong' },
+  { key: 'fullbody', label: 'Full Body', icon: 'icon-tice' },
+  { key: 'custom', label: '自定义', icon: 'icon-jianshenqixie' },
 ]
 
 const filteredPlans = computed(() => {

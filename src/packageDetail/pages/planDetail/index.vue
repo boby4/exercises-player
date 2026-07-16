@@ -33,14 +33,14 @@
             mode="aspectFill"
           />
           <view v-else class="exercise-thumb-placeholder">
-            <text class="thumb-icon">💪</text>
+            <IconFont name="icon-jirounan" :size="18" class="thumb-icon" />
           </view>
           <view class="exercise-info">
             <text class="exercise-name">{{ ex.name }}</text>
             <text class="exercise-target">{{ ex.target }}</text>
           </view>
           <view class="exercise-remove" @tap.stop="removeExercise(ex.id)">
-            <text class="remove-icon">✕</text>
+            <IconFont name="icon-bushui" :size="10" class="remove-icon" />
           </view>
         </view>
       </view>
@@ -48,7 +48,7 @@
 
     <!-- 空列表 -->
     <view class="empty-section" v-else>
-      <text class="empty-icon">🏋️</text>
+      <IconFont name="icon-yaling" :size="48" class="empty-icon" />
       <text class="empty-title">计划还没有动作</text>
       <text class="empty-desc">点击下方按钮添加动作到计划中</text>
     </view>
@@ -80,7 +80,7 @@
       <view class="modal-header">
         <text class="modal-title">选择动作</text>
         <view class="modal-close" @tap="closeAddModal">
-          <text class="modal-close-icon">&#x2715;</text>
+          <IconFont name="icon-bushui" :size="11" class="modal-close-icon" />
         </view>
       </view>
       <view class="modal-search">
@@ -99,7 +99,7 @@
           @tap="toggleSelect(ex.id)"
         >
           <view class="modal-check" :class="{ checked: selectedIds.includes(ex.id) }">
-            <text v-if="selectedIds.includes(ex.id)" class="check-mark">&#x2713;</text>
+            <IconFont v-if="selectedIds.includes(ex.id)" name="icon-bushui" :size="12" class="check-mark" />
           </view>
           <image
             v-if="getGif(ex)"
@@ -108,7 +108,7 @@
             mode="aspectFill"
           />
           <view v-else class="modal-exercise-thumb-placeholder">
-            <text class="thumb-ph-icon">💪</text>
+            <IconFont name="icon-jirounan" :size="18" class="thumb-ph-icon" />
           </view>
           <view class="modal-exercise-info">
             <text class="modal-exercise-name">{{ ex.name }}</text>
@@ -132,6 +132,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
+import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import { getExerciseById, getGifUrl, getAllExercises } from '@/utils/data'

@@ -9,7 +9,7 @@
         class="gif-image"
       />
       <view v-else class="gif-placeholder">
-        <text class="placeholder-text">🏋️</text>
+        <IconFont name="icon-yaling" :size="64" class="placeholder-text" />
       </view>
     </view>
 
@@ -101,6 +101,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
+import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import type { BodyPart } from '@/types/exercise'

@@ -4,7 +4,7 @@
     <view class="status-bar">
       <view class="top-bar">
         <view class="close-btn" @tap="exitTraining">
-          <text class="close-icon">&#x2715;</text>
+          <IconFont name="icon-bushui" :size="12" class="close-icon" />
         </view>
         <text class="progress-text">{{ currentIndex + 1 }} / {{ exercises.length }}</text>
         <view class="timer-badge">
@@ -26,7 +26,7 @@
         class="exercise-gif"
       />
       <view v-else class="gif-placeholder">
-        <text class="placeholder-icon">🏋️</text>
+        <IconFont name="icon-yaling" :size="60" class="placeholder-icon" />
         <text class="placeholder-hint">暂无演示图</text>
       </view>
     </view>
@@ -62,7 +62,7 @@
               mode="aspectFill"
             />
             <view v-else class="nav-thumb-ph">
-              <text class="nav-thumb-icon">💪</text>
+              <IconFont name="icon-jirounan" :size="20" class="nav-thumb-icon" />
             </view>
             <text class="nav-thumb-num">{{ idx + 1 }}</text>
           </view>
@@ -105,7 +105,7 @@
     <!-- 控制按钮 -->
     <view class="controls">
       <view class="nav-btn" :class="{ disabled: currentIndex === 0 }" @tap="prevExercise">
-        <text class="nav-btn-text">&#x25C0;</text>
+        <IconFont name="icon-jianshenqixie" :size="16" class="nav-btn-text" />
         <text class="nav-btn-label">上一个</text>
       </view>
 
@@ -116,7 +116,7 @@
       </view>
 
       <view class="nav-btn" :class="{ disabled: currentIndex >= exercises.length - 1 }" @tap="nextExercise">
-        <text class="nav-btn-text">&#x25B6;</text>
+        <IconFont name="icon-jianshenqixie" :size="16" class="nav-btn-text" />
         <text class="nav-btn-label">下一个</text>
       </view>
     </view>
@@ -124,7 +124,7 @@
     <!-- 训练完成 -->
     <view v-if="isComplete && currentIndex >= exercises.length - 1" class="complete-overlay">
       <view class="complete-card">
-        <text class="complete-icon">🎉</text>
+        <IconFont name="icon-tice" :size="48" class="complete-icon" />
         <text class="complete-title">训练完成！</text>
         <text class="complete-info">{{ exercises.length }} 个动作 · {{ formatTotalDuration }}</text>
         <view class="complete-actions">
@@ -143,6 +143,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
+import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { getExerciseById, getExercisesByIds, getGifUrl } from '@/utils/data'
 import { useTimer } from '@/hooks/useTimer'

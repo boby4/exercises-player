@@ -9,7 +9,7 @@
     </view>
 
     <view v-else class="empty-state">
-      <text class="empty-icon">💚</text>
+      <IconFont name="icon-shoushen" :size="64" class="empty-icon" />
       <text class="empty-title">暂无收藏</text>
       <text class="empty-desc">浏览动作详情时点击爱心即可收藏</text>
     </view>
@@ -24,6 +24,7 @@
 import { ref, computed } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
+import IconFont from '@/components/IconFont/index.vue'
 import { useFavoriteStore } from '@/store/favorite'
 
 const favoriteStore = useFavoriteStore()
