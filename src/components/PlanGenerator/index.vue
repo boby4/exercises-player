@@ -131,7 +131,7 @@
           >
             <text class="gen-preview-idx">{{ idx + 1 }}</text>
             <view class="gen-preview-info">
-              <text class="gen-preview-ex-name">{{ ex.name }}</text>
+              <text class="gen-preview-ex-name">{{ getExerciseNameZh(ex) }}</text>
               <text class="gen-preview-ex-meta">{{ ex.target }} · {{ getEquipLabel(ex.equipment) }}</text>
             </view>
             <view class="gen-preview-del" @tap="removeExercise(ex.id)">
@@ -180,6 +180,7 @@ import {
 } from '@/utils/planGenerator'
 import type { TrainingGoal, BodyFocus, Duration, Location, GeneratedPlan } from '@/utils/planGenerator'
 import { EQUIPMENT_LABELS } from '@/types/exercise'
+import { getExerciseNameZh } from '@/utils/data'
 import { usePlanStore } from '@/store/plan'
 
 const props = defineProps<{ visible: boolean }>()

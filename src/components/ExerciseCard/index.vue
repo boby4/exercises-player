@@ -16,7 +16,7 @@
       </view>
     </view>
     <view class="card-body">
-      <text class="card-title">{{ exercise.name }}</text>
+      <text class="card-title">{{ getExerciseNameZh(exercise) }}</text>
       <view class="card-tags">
         <view class="tag" v-if="exercise.target">
           <text class="tag-text">{{ exercise.target }}</text>
@@ -34,7 +34,7 @@ import { computed } from 'vue'
 import Taro from '@tarojs/taro'
 import type { Exercise } from '@/types/exercise'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
-import { getGifUrl } from '@/utils/data'
+import { getGifUrl, getExerciseNameZh } from '@/utils/data'
 import type { BodyPart } from '@/types/exercise'
 
 interface Props {

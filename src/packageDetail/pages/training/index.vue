@@ -33,7 +33,7 @@
 
     <!-- 动作信息 -->
     <view class="info-area" v-if="currentExercise">
-      <text class="exercise-name">{{ currentExercise.name }}</text>
+      <text class="exercise-name">{{ getExerciseNameZh(currentExercise) }}</text>
       <view class="exercise-meta">
         <view class="meta-tag">
           <text class="meta-tag-text">{{ currentExercise.target }}</text>
@@ -145,7 +145,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
-import { getExerciseById, getExercisesByIds, getGifUrl } from '@/utils/data'
+import { getExerciseById, getExercisesByIds, getGifUrl, getExerciseNameZh } from '@/utils/data'
 import { useTimer } from '@/hooks/useTimer'
 import { useShare } from '@/hooks/useShare'
 import { useRecordStore } from '@/store/record'

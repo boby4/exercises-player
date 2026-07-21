@@ -1,6 +1,7 @@
 import type { Exercise, FilterOptions } from '@/types/exercise'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import exercisesRaw from '@/assets/data/exercises-index.json'
+import nameZhMap from '@/assets/data/exercise-name-zh.json'
 
 // 轻量索引：仅包含列表/筛选所需字段（~253KB）
 // 完整数据（instruction_steps等）由分包 data-full.ts 提供
@@ -73,15 +74,17 @@ export function filterExercises(filters: FilterOptions): Exercise[] {
   }
   if (filters.keyword) {
     const keywords = resolveKeyword(filters.keyword)
-    result = result.filter((e) =>
-      keywords.some(
+    result = result.filter((e) => {
+      const zhName = (nameZhMap as Record<string, string>)[e.id] || ''
+      return keywords.some(
         (kw) =>
           e.name.toLowerCase().includes(kw) ||
+          zhName.toLowerCase().includes(kw) ||
           e.target.toLowerCase().includes(kw) ||
           e.body_part.toLowerCase().includes(kw) ||
           e.equipment.toLowerCase().includes(kw)
       )
-    )
+    })
   }
 
   return result
@@ -128,6 +131,13 @@ export function getEquipmentCount(): Record<string, number> {
     counts[e.equipment] = (counts[e.equipment] || 0) + 1
   })
   return counts
+}
+
+/**
+ * 获取动作的中文名称，无翻译时返回英文原名
+ */
+export function getExerciseNameZh(exercise: Exercise): string {
+  return (nameZhMap as Record<string, string>)[exercise.id] || exercise.name
 }
 
 export function getGifUrl(exercise: Exercise): string {

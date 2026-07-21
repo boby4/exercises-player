@@ -147,7 +147,7 @@ import IconFont from '@/components/IconFont/index.vue'
 import { usePlanStore } from '@/store/plan'
 import { useRecordStore } from '@/store/record'
 import { useShare } from '@/hooks/useShare'
-import { getExerciseById } from '@/utils/data'
+import { getExerciseById, getExerciseNameZh } from '@/utils/data'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import type { PlanType } from '@/types/exercise'
 import PlanGenerator from '@/components/PlanGenerator/index.vue'
@@ -207,7 +207,7 @@ function getTypeIcon(type: PlanType): string {
 
 function getExerciseName(id: string): string {
   const ex = getExerciseById(id)
-  return ex?.name || '未知动作'
+  return ex ? getExerciseNameZh(ex) : '未知动作'
 }
 
 function formatDate(dateStr: string): string {

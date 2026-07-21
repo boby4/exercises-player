@@ -16,7 +16,7 @@
     <!-- 动作信息 -->
     <view class="info-section">
       <view class="title-row">
-        <text class="exercise-name">{{ exercise.name }}</text>
+        <text class="exercise-name">{{ getExerciseNameZh(exercise) }}</text>
         <FavoriteButton :exercise-id="exercise.id" />
       </view>
 
@@ -108,7 +108,7 @@ import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import type { BodyPart } from '@/types/exercise'
-import { getRelatedExercises, getGifUrl } from '@/utils/data'
+import { getRelatedExercises, getGifUrl, getExerciseNameZh } from '@/utils/data'
 import { getFullExerciseById } from '../../utils/data-full'
 import { useExerciseStore } from '@/store/exercise'
 import { useShare } from '@/hooks/useShare'

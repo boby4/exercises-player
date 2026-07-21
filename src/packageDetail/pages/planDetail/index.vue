@@ -36,7 +36,7 @@
             <IconFont name="icon-jirounan" :size="18" class="thumb-icon" />
           </view>
           <view class="exercise-info">
-            <text class="exercise-name">{{ ex.name }}</text>
+            <text class="exercise-name">{{ getExerciseNameZh(ex) }}</text>
             <text class="exercise-target">{{ ex.target }}</text>
           </view>
           <view class="exercise-remove" @tap.stop="removeExercise(ex.id)">
@@ -114,7 +114,7 @@
             <IconFont name="icon-jirounan" :size="18" class="thumb-ph-icon" />
           </view>
           <view class="modal-exercise-info">
-            <text class="modal-exercise-name">{{ ex.name }}</text>
+            <text class="modal-exercise-name">{{ getExerciseNameZh(ex) }}</text>
             <text class="modal-exercise-target">{{ ex.target }} · {{ ex.equipment }}</text>
           </view>
         </view>
@@ -138,7 +138,7 @@ import Taro, { useRouter } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
-import { getExerciseById, getGifUrl, getAllExercises } from '@/utils/data'
+import { getExerciseById, getGifUrl, getAllExercises, getExerciseNameZh } from '@/utils/data'
 import { useShare } from '@/hooks/useShare'
 import { usePlanStore } from '@/store/plan'
 
