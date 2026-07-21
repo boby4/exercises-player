@@ -6,6 +6,10 @@
         <text class="create-icon">+</text>
         <text class="create-text">创建训练计划</text>
       </view>
+      <view class="generate-btn" @tap="showGenerator = true">
+        <text class="generate-icon">✨</text>
+        <text class="generate-text">智能生成</text>
+      </view>
     </view>
 
     <!-- 计划类型选择 -->
@@ -130,6 +134,9 @@
         </view>
       </view>
     </view>
+
+    <!-- 智能生成弹窗 -->
+    <PlanGenerator :visible="showGenerator" @close="showGenerator = false" @saved="onGeneratorSaved" />
   </view>
 </template>
 
@@ -143,10 +150,12 @@ import { useShare } from '@/hooks/useShare'
 import { getExerciseById } from '@/utils/data'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import type { PlanType } from '@/types/exercise'
+import PlanGenerator from '@/components/PlanGenerator/index.vue'
 
 const planStore = usePlanStore()
 const recordStore = useRecordStore()
 const showCreateModal = ref(false)
+const showGenerator = ref(false)
 
 useShare({
   title: '定制你的训练计划 - ExercisesPlayer',
@@ -157,6 +166,14 @@ const newPlanType = ref<PlanType>('push')
 const selectedType = ref('')
 
 watch(showCreateModal, (val) => {
+  if (val) {
+    Taro.hideTabBar({ animation: false })
+  } else {
+    Taro.showTabBar({ animation: false })
+  }
+})
+
+watch(showGenerator, (val) => {
   if (val) {
     Taro.hideTabBar({ animation: false })
   } else {
@@ -236,6 +253,10 @@ function startPlanTraining(planId: string): void {
   }
 }
 
+function onGeneratorSaved(): void {
+  showGenerator.value = false
+}
+
 function deletePlan(planId: string): void {
   Taro.showModal({
     title: '确认删除',
@@ -259,9 +280,12 @@ function deletePlan(planId: string): void {
 
 .create-section {
   padding: 16px 16px 12px;
+  display: flex;
+  gap: 10px;
 }
 
 .create-btn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,6 +304,30 @@ function deletePlan(planId: string): void {
 }
 
 .create-text {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.generate-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.generate-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.generate-text {
   font-size: 15px;
   color: #fff;
   font-weight: 600;
