@@ -1,9 +1,26 @@
 import type { Exercise, FilterOptions } from '@/types/exercise'
+import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import exercisesRaw from '@/assets/data/exercises-index.json'
 
 // 轻量索引：仅包含列表/筛选所需字段（~253KB）
 // 完整数据（instruction_steps等）由分包 data-full.ts 提供
 const exercises = exercisesRaw as Exercise[]
+
+// 中文 → 英文反向映射，用于中文关键词搜索
+const zhToEnMap: Record<string, string> = {}
+for (const [en, zh] of Object.entries(BODY_PART_LABELS)) {
+  zhToEnMap[zh.toLowerCase()] = en.toLowerCase()
+}
+for (const [en, zh] of Object.entries(EQUIPMENT_LABELS)) {
+  zhToEnMap[zh.toLowerCase()] = en.toLowerCase()
+}
+
+function resolveKeyword(kw: string): string[] {
+  const lower = kw.toLowerCase()
+  // 如果中文命中映射，同时搜索中文本身和对应英文
+  const mapped = zhToEnMap[lower]
+  return mapped ? [lower, mapped] : [lower]
+}
 
 let cachedBodyParts: string[] = []
 let cachedEquipment: string[] = []
@@ -55,13 +72,15 @@ export function filterExercises(filters: FilterOptions): Exercise[] {
     result = result.filter((e) => e.target === filters.target)
   }
   if (filters.keyword) {
-    const kw = filters.keyword.toLowerCase()
-    result = result.filter(
-      (e) =>
-        e.name.toLowerCase().includes(kw) ||
-        e.target.toLowerCase().includes(kw) ||
-        e.body_part.toLowerCase().includes(kw) ||
-        e.equipment.toLowerCase().includes(kw)
+    const keywords = resolveKeyword(filters.keyword)
+    result = result.filter((e) =>
+      keywords.some(
+        (kw) =>
+          e.name.toLowerCase().includes(kw) ||
+          e.target.toLowerCase().includes(kw) ||
+          e.body_part.toLowerCase().includes(kw) ||
+          e.equipment.toLowerCase().includes(kw)
+      )
     )
   }
 
