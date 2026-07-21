@@ -12,7 +12,7 @@
     "css": "none"
   },
   "scripts": {
-    "build:weapp": "taro build --type weapp",
+    "build:weapp": "taro build --type weapp && node scripts/patch-share-config.js",
     "build:h5": "taro build --type h5",
     "build:rn": "taro build --type rn",
     "dev:weapp": "npm run build:weapp -- --watch",

@@ -90,11 +90,17 @@ import Tag from '@/components/Tag/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
 import { useExerciseStore } from '@/store/exercise'
 import { useSearch } from '@/hooks/useSearch'
+import { useShare } from '@/hooks/useShare'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import type { BodyPart } from '@/types/exercise'
 
 const exerciseStore = useExerciseStore()
 const router = useRouter()
+
+useShare({
+  title: '海量健身动作，一键搜索 - ExercisesPlayer',
+  path: '/pages/search/index',
+})
 const listHeight = ref(600)
 
 const {

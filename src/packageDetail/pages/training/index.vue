@@ -147,6 +147,7 @@ import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { getExerciseById, getExercisesByIds, getGifUrl } from '@/utils/data'
 import { useTimer } from '@/hooks/useTimer'
+import { useShare } from '@/hooks/useShare'
 import { useRecordStore } from '@/store/record'
 import { usePlanStore } from '@/store/plan'
 
@@ -179,6 +180,18 @@ const {
 
 const currentExercise = computed(() => exercises.value[currentIndex.value] || null)
 const currentGif = computed(() => (currentExercise.value ? getGifUrl(currentExercise.value) : ''))
+
+useShare(() => {
+  const names = exercises.value.map((e) => e.name).join('、')
+  return {
+    title: exercises.value.length > 0 ? `跟我一起练：${names}` : '跟我一起健身吧',
+    path: router.params.planId
+      ? `/packageDetail/pages/training/index?planId=${router.params.planId}`
+      : exercises.value.length > 0
+        ? `/packageDetail/pages/training/index?ids=${exercises.value.map((e) => e.id).join(',')}`
+        : '/pages/index/index',
+  }
+})
 
 function getGif(ex: Exercise): string {
   return getGifUrl(ex)

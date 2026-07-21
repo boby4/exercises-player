@@ -91,6 +91,9 @@
 
     <!-- 底部操作 -->
     <view class="bottom-bar">
+      <button class="share-btn" open-type="share">
+        <text class="share-icon-text">↗</text>
+      </button>
       <view class="start-btn" @tap="startTraining">
         <text class="start-text">开始训练</text>
       </view>
@@ -108,6 +111,7 @@ import type { BodyPart } from '@/types/exercise'
 import { getRelatedExercises, getGifUrl } from '@/utils/data'
 import { getFullExerciseById } from '../../utils/data-full'
 import { useExerciseStore } from '@/store/exercise'
+import { useShare } from '@/hooks/useShare'
 import FavoriteButton from '@/components/FavoriteButton/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 
@@ -142,6 +146,13 @@ const relatedExercises = computed(() => {
   if (!exercise.value) return []
   return getRelatedExercises(exercise.value, 6)
 })
+
+useShare(() => ({
+  title: exercise.value ? `${exercise.value.name} - 健身动作详情` : '健身动作详情',
+  path: exercise.value
+    ? `/packageDetail/pages/detail/index?id=${exercise.value.id}`
+    : '/pages/index/index',
+}))
 
 function startTraining(): void {
   if (!exercise.value) return
@@ -378,10 +389,38 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-btn {
+  width: 48px;
+  height: 48px;
+  background: #f5f5f5;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon-text {
+  font-size: 20px;
+  color: #666;
+  font-weight: 700;
 }
 
 .start-btn {
-  width: 100%;
+  flex: 1;
   height: 48px;
   background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
   border-radius: 24px;

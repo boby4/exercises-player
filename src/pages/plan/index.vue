@@ -139,6 +139,7 @@ import Taro from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import { usePlanStore } from '@/store/plan'
 import { useRecordStore } from '@/store/record'
+import { useShare } from '@/hooks/useShare'
 import { getExerciseById } from '@/utils/data'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import type { PlanType } from '@/types/exercise'
@@ -146,6 +147,11 @@ import type { PlanType } from '@/types/exercise'
 const planStore = usePlanStore()
 const recordStore = useRecordStore()
 const showCreateModal = ref(false)
+
+useShare({
+  title: '定制你的训练计划 - ExercisesPlayer',
+  path: '/pages/plan/index',
+})
 const newPlanName = ref('')
 const newPlanType = ref<PlanType>('push')
 const selectedType = ref('')

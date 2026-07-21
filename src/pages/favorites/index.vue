@@ -26,9 +26,15 @@ import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
 import { useFavoriteStore } from '@/store/favorite'
+import { useShare } from '@/hooks/useShare'
 
 const favoriteStore = useFavoriteStore()
 const searchKeyword = ref('')
+
+useShare({
+  title: '我的健身收藏 - ExercisesPlayer',
+  path: '/pages/favorites/index',
+})
 
 const displayList = computed(() => {
   const all = favoriteStore.favoriteExercises

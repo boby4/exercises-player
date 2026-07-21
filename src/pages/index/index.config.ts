@@ -1,4 +1,1 @@
-export default definePageConfig({
-  navigationBarTitleText: 'ExercisesPlayer',
-  enablePullDownRefresh: true,
-})
+export default definePageConfig({ enableShareAppMessage: true, enableShareTimeline: true })

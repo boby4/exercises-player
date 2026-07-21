@@ -1,3 +1,1 @@
-export default definePageConfig({
-  navigationBarTitleText: '个人中心',
-})
+export default definePageConfig({ enableShareAppMessage: true, enableShareTimeline: true })

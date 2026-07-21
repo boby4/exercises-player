@@ -63,6 +63,9 @@
 
     <!-- 底部操作栏 -->
     <view class="bottom-bar" v-if="plan.exerciseIds.length > 0">
+      <button class="share-btn" open-type="share">
+        <text class="share-icon-text">↗</text>
+      </button>
       <view class="start-btn" @tap="startTraining">
         <text class="start-text">开始训练</text>
       </view>
@@ -136,6 +139,7 @@ import IconFont from '@/components/IconFont/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import { getExerciseById, getGifUrl, getAllExercises } from '@/utils/data'
+import { useShare } from '@/hooks/useShare'
 import { usePlanStore } from '@/store/plan'
 
 const router = useRouter()
@@ -158,6 +162,13 @@ const exercises = computed(() => {
 function getGif(ex: Exercise): string {
   return getGifUrl(ex)
 }
+
+useShare(() => ({
+  title: plan.value ? `${plan.value.name} - 训练计划` : '训练计划',
+  path: plan.value
+    ? `/packageDetail/pages/planDetail/index?planId=${planId.value}`
+    : '/pages/index/index',
+}))
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
@@ -514,10 +525,38 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
   z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-btn {
+  width: 44px;
+  height: 44px;
+  background: #f5f5f5;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon-text {
+  font-size: 20px;
+  color: #666;
+  font-weight: 700;
 }
 
 .start-btn {
-  width: 100%;
+  flex: 1;
   height: 44px;
   background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
   border-radius: 22px;

@@ -1,4 +1,1 @@
-export default definePageConfig({
-  navigationBarTitleText: '训练模式',
-  navigationStyle: 'custom',
-})
+export default definePageConfig({ enableShareAppMessage: true, enableShareTimeline: true })

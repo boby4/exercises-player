@@ -1,3 +1,1 @@
-export default definePageConfig({
-  navigationBarTitleText: '训练计划',
-})
+export default definePageConfig({ enableShareAppMessage: true, enableShareTimeline: true })

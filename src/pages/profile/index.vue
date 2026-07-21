@@ -67,9 +67,15 @@ import Taro from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import { useRecordStore } from '@/store/record'
 import { useFavoriteStore } from '@/store/favorite'
+import { useShare } from '@/hooks/useShare'
 
 const recordStore = useRecordStore()
 const favoriteStore = useFavoriteStore()
+
+useShare({
+  title: '我的健身数据 - ExercisesPlayer',
+  path: '/pages/profile/index',
+})
 
 const totalMinutes = computed(() => {
   return Math.round(recordStore.totalDuration / 60)

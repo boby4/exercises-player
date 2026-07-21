@@ -103,12 +103,18 @@ import IconFont from '@/components/IconFont/index.vue'
 import { useExerciseStore } from '@/store/exercise'
 import { useFavoriteStore } from '@/store/favorite'
 import { usePlanStore } from '@/store/plan'
+import { useShare } from '@/hooks/useShare'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import { getRandomExercises } from '@/utils/data'
 
 const exerciseStore = useExerciseStore()
 const favoriteStore = useFavoriteStore()
 const planStore = usePlanStore()
+
+useShare({
+  title: 'ExercisesPlayer - 专业健身动作库',
+  path: '/pages/index/index',
+})
 
 const searchKeyword = ref('')
 const randomPicks = ref(getRandomExercises(6))
