@@ -151,9 +151,11 @@ function toggleEquipment(eq: string): void {
 
 function onKeywordChange(val: string): void {
   keyword.value = val
-  if (val.length >= 2) {
-    currentPage.value = 1
+  currentPage.value = 1
+  if (val.trim()) {
     doSearch()
+  } else {
+    results.value = []
   }
 }
 
