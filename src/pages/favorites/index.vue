@@ -27,6 +27,8 @@ import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
 import { useFavoriteStore } from '@/store/favorite'
 import { useShare } from '@/hooks/useShare'
+import { getExerciseNameZh } from '@/utils/data'
+import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 
 const favoriteStore = useFavoriteStore()
 const searchKeyword = ref('')
@@ -36,16 +38,33 @@ useShare({
   path: '/pages/favorites/index',
 })
 
+// 中文 → 英文反向映射
+const zhToEnMap: Record<string, string> = {}
+for (const [en, zh] of Object.entries(BODY_PART_LABELS)) {
+  zhToEnMap[zh.toLowerCase()] = en.toLowerCase()
+}
+for (const [en, zh] of Object.entries(EQUIPMENT_LABELS)) {
+  zhToEnMap[zh.toLowerCase()] = en.toLowerCase()
+}
+
 const displayList = computed(() => {
   const all = favoriteStore.favoriteExercises
   if (!searchKeyword.value) return all
   const kw = searchKeyword.value.toLowerCase()
-  return all.filter(
-    (e) =>
-      e.name.toLowerCase().includes(kw) ||
-      e.target.toLowerCase().includes(kw) ||
-      e.body_part.toLowerCase().includes(kw)
-  )
+  const mapped = zhToEnMap[kw]
+  const keywords = mapped ? [kw, mapped] : [kw]
+  
+  return all.filter((e) => {
+    const zhName = getExerciseNameZh(e).toLowerCase()
+    return keywords.some(
+      (k) =>
+        e.name.toLowerCase().includes(k) ||
+        zhName.includes(k) ||
+        e.target.toLowerCase().includes(k) ||
+        e.body_part.toLowerCase().includes(k) ||
+        e.equipment.toLowerCase().includes(k)
+    )
+  })
 })
 
 function handleSearch(): void {

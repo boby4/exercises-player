@@ -12,7 +12,7 @@
           </view>
           <view class="profile-text">
             <text class="profile-title">ExercisesPlayer</text>
-            <text class="profile-desc">你的专属健身教练</text>
+            <text class="profile-desc">你的专属健身搭子</text>
             <view class="profile-badge">
               <IconFont name="icon-jirounan" :size="12" class="badge-icon" />
               <text class="badge-text">健身达人</text>

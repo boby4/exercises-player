@@ -8,7 +8,7 @@
         </view>
       </view>
       <text class="app-name">ExercisesPlayer</text>
-      <text class="app-slogan">你的专属健身教练</text>
+      <text class="app-slogan">你的专属健身搭子</text>
       <view class="version-badge">
         <text class="version-text">v1.0.0</text>
       </view>

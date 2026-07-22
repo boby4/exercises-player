@@ -16,6 +16,11 @@
     <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="search-filter-scroll">
       <view class="search-filter-group">
         <Tag
+          label="全部"
+          :selected="!selectedBodyPart"
+          @tap="clearBodyPartFilter"
+        />
+        <Tag
           v-for="bp in exerciseStore.bodyParts"
           :key="bp"
           :label="getBodyPartLabel(bp)"
@@ -33,6 +38,11 @@
     <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="search-filter-scroll">
       <view class="search-filter-group">
         <Tag
+          label="全部"
+          :selected="!selectedEquipment"
+          @tap="clearEquipmentFilter"
+        />
+        <Tag
           v-for="eq in exerciseStore.equipmentList"
           :key="eq"
           :label="getEquipmentLabel(eq)"
@@ -43,9 +53,9 @@
     </scroll-view>
 
     <!-- 结果统计 -->
-    <view v-if="hasFilters" class="result-header">
-      <text class="result-count">找到 {{ resultCount }} 个动作</text>
-      <view class="clear-all" @tap="clearFilters">
+    <view class="result-header">
+      <text class="result-count">{{ hasFilters ? '找到' : '共' }} {{ totalCount }} 个动作</text>
+      <view v-if="hasFilters" class="clear-all" @tap="clearFilters">
         <text class="clear-icon-x">&#x2715;</text>
         <text class="clear-text">清除筛选</text>
       </view>
@@ -54,7 +64,6 @@
     <!-- 结果列表 -->
     <scroll-view
       :scroll-y="true"
-      v-if="hasFilters"
       class="result-list"
       :style="{ height: listHeight + 'px' }"
       @scrolltolower="loadMore"
@@ -71,13 +80,6 @@
         </view>
       </view>
     </scroll-view>
-
-    <!-- 无筛选时的提示 -->
-    <view v-if="!hasFilters" class="hint-section">
-      <IconFont name="icon-jiankangshipin" :size="48" class="hint-icon" />
-      <text class="hint-text">输入关键词或选择筛选条件来搜索动作</text>
-      <text class="hint-sub">支持按动作名、肌群、器械搜索</text>
-    </view>
   </view>
 </template>
 
@@ -93,6 +95,7 @@ import { useSearch } from '@/hooks/useSearch'
 import { useShare } from '@/hooks/useShare'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 import type { BodyPart } from '@/types/exercise'
+import { getAllExercises } from '@/utils/data'
 
 const exerciseStore = useExerciseStore()
 const router = useRouter()
@@ -119,8 +122,16 @@ const {
 const pageSize = 20
 const currentPage = ref(1)
 
+// 默认展示全部动作
+const allExercises = getAllExercises()
+
 const displayList = computed(() => {
-  return results.value.slice(0, currentPage.value * pageSize)
+  const list = hasFilters.value ? results.value : allExercises
+  return list.slice(0, currentPage.value * pageSize)
+})
+
+const totalCount = computed(() => {
+  return hasFilters.value ? resultCount.value : allExercises.length
 })
 
 function getBodyPartLabel(bp: string): string {
@@ -149,6 +160,16 @@ function toggleEquipment(eq: string): void {
   currentPage.value = 1
 }
 
+function clearBodyPartFilter(): void {
+  setFilter('bodyPart', '')
+  currentPage.value = 1
+}
+
+function clearEquipmentFilter(): void {
+  setFilter('equipment', '')
+  currentPage.value = 1
+}
+
 function onKeywordChange(val: string): void {
   keyword.value = val
   currentPage.value = 1
@@ -160,7 +181,7 @@ function onKeywordChange(val: string): void {
 }
 
 function loadMore(): void {
-  if (displayList.value.length < results.value.length) {
+  if (displayList.value.length < totalCount.value) {
     currentPage.value++
   }
 }
