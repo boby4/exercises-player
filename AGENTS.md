@@ -45,7 +45,8 @@ exercises-player/
 │   ├── app.config.ts      # 页面/路由/TabBar配置
 │   ├── components/        # 公共组件
 │   │   ├── FavoriteButton/  # 收藏按钮
-│   │   └── PlanGenerator/   # 智能生成训练计划弹窗
+│   │   ├── IconFont/        # IconFont 图标组件
+│   │   └── SvgIcon/         # SVG 图标组件 (备用)
 │   ├── hooks/             # Vue composables
 │   │   ├── useSearch.ts   # 搜索逻辑
 │   │   ├── useShare.ts    # 微信分享转发
@@ -60,12 +61,17 @@ exercises-player/
 │   │   └── pages/
 │   │       ├── detail/    # 动作详情
 │   │       ├── training/  # 训练执行
-│   │       └── planDetail/ # 计划详情
+│   │       ├── planDetail/ # 计划详情
+│   │       ├── calculator/ # 健康计算器
+│   │       ├── about/     # 关于我们
+│   │       └── generator/ # 智能生成训练计划
 │   ├── store/             # Pinia 状态
 │   │   ├── exercise.ts    # 动作数据 (ExerciseDB)
 │   │   ├── favorite.ts    # 收藏 + 云同步
 │   │   ├── plan.ts        # 训练计划 + 云同步
 │   │   └── record.ts      # 训练记录 + 云同步
+│   ├── styles/            # 全局样式
+│   │   └── iconfont.css   # IconFont 字体样式
 │   ├── types/             # TypeScript 类型定义
 │   │   └── exercise.ts    # Exercise/Plan/Record 类型
 │   └── utils/             # 工具函数
@@ -150,12 +156,78 @@ process.env.TARO_ENV === 'h5'     // H5
 → 按肌群分组筛选 → 权重分配 → 随机采样 → 生成计划
 ```
 
+**训练计划三阶段：**
+
+生成的计划包含三个阶段，确保训练完整性和安全性：
+- **热身阶段** (1个动作) - 从 cardio 或 body weight 动作中随机选择
+- **正式训练** (3-8个动作) - 根据时长和目标按权重分配
+- **拉伸放松** (1个动作) - 从 stretch/yoga 类动作中随机选择
+
 **关键文件：**
 
 - `src/utils/planGenerator.ts` — 核心逻辑（纯函数，所有映射表和生成算法）
-- `src/components/PlanGenerator/index.vue` — 分步表单弹窗 UI
+- `src/packageDetail/pages/generator/index.vue` — 独立页面 UI (5步分步表单)
 
-### 6. 微信分享转发
+### 6. IconFont 图标系统
+
+项目使用 Iconfont 图标字体，跨端兼容（H5 + 小程序）。
+
+**使用方式：**
+
+```vue
+<template>
+  <IconFont name="icon-yaling" :size="24" />
+  <IconFont name="icon-paobu" :size="20" />
+</template>
+
+<script setup>
+import IconFont from '@/components/IconFont/index.vue'
+</script>
+```
+
+**图标分类：**
+
+| 分类 | 图标类名 |
+|------|----------|
+| 健身器械 | icon-yaling, icon-jianshenqixie, icon-tiaosheng |
+| 身体指标 | icon-chengzhong, icon-feipang, icon-jirounan |
+| 运动类型 | icon-paobu, icon-fuwocheng, icon-yuqie |
+| 健康数据 | icon-bushui, icon-danbaifen, icon-jiankangshipin |
+| 状态图标 | icon-jieshi, icon-shoushen, icon-jieyan |
+
+**配置文件：**
+
+- `src/styles/iconfont.css` — @font-face 定义和图标类名
+- `src/components/IconFont/index.vue` — 图标组件封装
+
+### 7. 健康计算器
+
+位于 `packageDetail/pages/calculator/index`，提供三种健康指标计算：
+
+- **BMI 计算** - 体重指数，判断体重是否健康
+- **BMR 计算** - 基础代谢率，估算每日热量消耗
+- **体脂率计算** - 基于腰围估算体脂百分比
+
+### 8. 关于我们页面
+
+位于 `packageDetail/pages/about/index`，展示：
+
+- 应用 Logo 和品牌信息
+- 6大核心功能介绍（2x2网格布局）
+- 技术栈展示
+- 版权信息
+
+### 9. 个人中心优化
+
+顶部区域采用水平布局（头像左、文字右），包含：
+
+- 渐变深色背景 + 品牌头像
+- 用户信息和健身达人徽章
+- 4宫格统计卡片（训练次数/时长/收藏/计划）
+- 功能服务入口（智能生成计划/健康计算器/关于我们）
+- 清除数据按钮（灰色圆角居中）
+
+### 10. 微信分享转发
 
 通过 `useShare` hook + 页面级 config 实现全局分享：
 
@@ -265,6 +337,10 @@ const gifUrl = `https://static.exercisedb.dev/media/${exercise.media_id}.gif`
 | H5 本地和线上尺寸不一致 | 确保 rem 公式统一: `20 * w / 375` |
 | 分享菜单灰色不可用 | 需在页面 `.config.ts` 中设置 `enableShareAppMessage: true`，window 全局不生效 |
 | 构建后页面 JSON 无分享配置 | 执行 `npm run build:weapp` 会自动运行 patch 脚本注入 |
+| 小程序 v-html 不支持 | 使用 `rich-text` 组件或 SVG data URI |
+| UnoCSS 图标在小程序不显示 | 使用 IconFont 字体图标替代 |
+| 清除缓存后数据丢失 | 清除后调用 `syncFromCloud()` 从云端恢复 |
+| 函数名冲突导致递归 | 避免页面函数与导入函数同名，使用 handle 前缀区分 |
 
 ## 快速开始
 

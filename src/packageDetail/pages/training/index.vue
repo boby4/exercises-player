@@ -260,12 +260,18 @@ function applyCustom(): void {
   }
 }
 
-function finishTraining(): void {
+async function finishTraining(): Promise<void> {
   const duration = Math.floor((Date.now() - trainingStartTime.value) / 1000)
   const exerciseIds = exercises.value.map((e) => e.id)
   const planId = router.params.planId || undefined
-  recordStore.addRecord(exerciseIds, duration, planId)
-  Taro.showToast({ title: '训练已记录', icon: 'success' })
+  try {
+    await recordStore.addRecord(exerciseIds, duration, planId)
+    console.log('训练记录已保存，时长:', duration, '秒')
+    Taro.showToast({ title: '训练已记录', icon: 'success' })
+  } catch (e) {
+    console.error('保存训练记录失败:', e)
+    Taro.showToast({ title: '保存失败', icon: 'none' })
+  }
   setTimeout(() => Taro.navigateBack(), 1500)
 }
 

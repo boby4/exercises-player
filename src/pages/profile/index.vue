@@ -1,133 +1,191 @@
 <template>
   <view class="profile-page">
-    <!-- 统计卡片 -->
-    <view class="stats-hero">
-      <view class="stats-row">
-        <view class="stat-box">
+    <!-- 顶部头像区域 -->
+    <view class="profile-header">
+      <view class="header-bg" />
+      <view class="header-content">
+        <view class="profile-info">
+          <view class="avatar-wrap">
+            <view class="avatar">
+              <text class="avatar-text">EP</text>
+            </view>
+          </view>
+          <view class="profile-text">
+            <text class="profile-title">ExercisesPlayer</text>
+            <text class="profile-desc">你的专属健身教练</text>
+            <view class="profile-badge">
+              <IconFont name="icon-jirounan" :size="12" class="badge-icon" />
+              <text class="badge-text">健身达人</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 4宫格统计卡片 -->
+    <view class="stats-section">
+      <view class="stats-grid">
+        <view class="stat-card" @tap="goRecords">
+          <view class="stat-icon-wrap" style="background: rgba(76, 175, 80, 0.1)">
+            <IconFont name="icon-jishiqi" :size="24" style="color: #4caf50" />
+          </view>
           <text class="stat-num">{{ recordStore.totalRecords }}</text>
           <text class="stat-label">训练次数</text>
         </view>
-        <view class="stat-box">
-          <text class="stat-num">{{ totalMinutes }}</text>
-          <text class="stat-label">总时长(分钟)</text>
+        <view class="stat-card">
+          <view class="stat-icon-wrap" style="background: rgba(33, 150, 243, 0.1)">
+            <IconFont name="icon-paobu" :size="24" style="color: #2196f3" />
+          </view>
+          <text class="stat-num">{{ totalDurationText }}</text>
+          <text class="stat-label">训练时长</text>
         </view>
-        <view class="stat-box">
+        <view class="stat-card" @tap="goFavorites">
+          <view class="stat-icon-wrap" style="background: rgba(244, 67, 54, 0.1)">
+            <IconFont name="icon-shoushen" :size="24" style="color: #f44336" />
+          </view>
           <text class="stat-num">{{ favoriteStore.count }}</text>
           <text class="stat-label">收藏动作</text>
         </view>
+        <view class="stat-card" @tap="goPlans">
+          <view class="stat-icon-wrap" style="background: rgba(255, 152, 0, 0.1)">
+            <IconFont name="icon-jianshenbao" :size="24" style="color: #ff9800" />
+          </view>
+          <text class="stat-num">{{ planStore.planCount }}</text>
+          <text class="stat-label">我的计划</text>
+        </view>
       </view>
     </view>
 
-    <!-- 最近训练记录 -->
+    <!-- 功能入口 -->
     <view class="section">
-      <text class="section-title">最近训练</text>
-      <view v-if="recordStore.recentRecords.length > 0" class="record-list">
-        <view v-for="record in recordStore.recentRecords" :key="record.id" class="record-card">
-          <view class="record-left">
-            <view class="record-date-badge">
-              <text class="record-day">{{ getDay(record.date) }}</text>
-              <text class="record-month">{{ getMonth(record.date) }}</text>
-            </view>
+      <text class="section-title">功能服务</text>
+      <view class="entry-cards">
+        <view class="entry-card" @tap="goGenerator">
+          <view class="entry-icon-box" style="background: #fff8e1">
+            <IconFont name="icon-jianshenbao" :size="20" style="color: #ff9800" />
           </view>
-          <view class="record-info">
-            <text class="record-title">{{ record.exerciseIds.length }} 个动作</text>
-            <text class="record-duration">{{ formatDuration(record.duration) }}</text>
+          <view class="entry-info">
+            <view class="entry-title">智能生成计划</view>
+            <view class="entry-desc">一键生成专属训练计划</view>
           </view>
-          <view class="record-delete" @tap="deleteRecord(record.id)">
-            <IconFont name="icon-bushui" :size="16" class="delete-icon" />
-          </view>
+          <text class="entry-arrow">›</text>
         </view>
-      </view>
-      <view v-else class="empty-records">
-        <IconFont name="icon-tice" :size="48" class="empty-icon" />
-        <text class="empty-text">暂无训练记录</text>
+        <view class="entry-card" @tap="goCalculator">
+          <view class="entry-icon-box" style="background: #fff3e0">
+            <IconFont name="icon-chengzhong" :size="20" style="color: #ff9800" />
+          </view>
+          <view class="entry-info">
+            <view class="entry-title">健康计算器</view>
+            <view class="entry-desc">BMI · 代谢率 · 体脂率</view>
+          </view>
+          <text class="entry-arrow">›</text>
+        </view>
+        <view class="entry-card" @tap="goAbout">
+          <view class="entry-icon-box" style="background: #e3f2fd">
+            <IconFont name="icon-jiankangshipin" :size="20" style="color: #2196f3" />
+          </view>
+          <view class="entry-info">
+            <view class="entry-title">关于我们</view>
+            <view class="entry-desc">版本信息 · 核心功能</view>
+          </view>
+          <text class="entry-arrow">›</text>
+        </view>
       </view>
     </view>
 
-    <!-- 设置项 -->
-    <view class="section">
-      <text class="section-title">设置</text>
-      <view class="settings-list">
-        <view class="setting-item" @tap="showAbout">
-          <text class="setting-label">关于</text>
-          <text class="setting-arrow">›</text>
-        </view>
-        <view class="setting-item" @tap="clearAllData">
-          <text class="setting-label danger">清除所有数据</text>
-          <text class="setting-arrow">›</text>
-        </view>
+    <!-- 清除数据 -->
+    <view class="clear-section">
+      <view class="clear-btn1" @tap="clearAllData">
+        <IconFont name="icon-bushui" :size="16" class="clear-icon" />
+        <text class="clear-text">清除本地缓存</text>
       </view>
     </view>
+
   </view>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import { useRecordStore } from '@/store/record'
 import { useFavoriteStore } from '@/store/favorite'
+import { usePlanStore } from '@/store/plan'
 import { useShare } from '@/hooks/useShare'
 
 const recordStore = useRecordStore()
 const favoriteStore = useFavoriteStore()
+const planStore = usePlanStore()
 
 useShare({
   title: '我的健身数据 - ExercisesPlayer',
   path: '/pages/profile/index',
 })
 
+// 页面显示时从云端同步数据
+useDidShow(() => {
+  recordStore.syncFromCloud()
+  favoriteStore.syncFromCloud()
+  planStore.syncFromCloud()
+})
+
+const totalDurationText = computed(() => {
+  const seconds = recordStore.totalDuration
+  if (seconds < 60) return `${seconds}秒`
+  const minutes = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  if (secs === 0) return `${minutes}分`
+  return `${minutes}'${secs}"`
+})
+
 const totalMinutes = computed(() => {
   return Math.round(recordStore.totalDuration / 60)
 })
 
-function getDay(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.getDate().toString()
+function goRecords(): void {
+  // 暂时隐藏训练记录
 }
 
-function getMonth(dateStr: string): string {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const date = new Date(dateStr)
-  return months[date.getMonth()]
+function goFavorites(): void {
+  Taro.switchTab({ url: '/pages/favorites/index' })
 }
 
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  if (mins === 0) return `${secs}秒`
-  return `${mins}分${secs}秒`
+function goPlans(): void {
+  Taro.switchTab({ url: '/pages/plan/index' })
 }
 
-function deleteRecord(id: string): void {
-  Taro.showModal({
-    title: '确认删除',
-    content: '确定要删除这条训练记录吗？',
-    success: (res) => {
-      if (res.confirm) {
-        recordStore.deleteRecord(id)
-      }
-    },
-  })
+function goCalculator(): void {
+  Taro.navigateTo({ url: '/packageDetail/pages/calculator/index' })
 }
 
-function showAbout(): void {
-  Taro.showModal({
-    title: 'ExercisesPlayer',
-    content: '离线健身动作库 v1.0.0\n包含 1,324 个健身动作\n数据来源：exercises-dataset',
-    showCancel: false,
-  })
+function goAbout(): void {
+  Taro.navigateTo({ url: '/packageDetail/pages/about/index' })
+}
+
+function goGenerator(): void {
+  Taro.navigateTo({ url: '/packageDetail/pages/generator/index' })
 }
 
 function clearAllData(): void {
   Taro.showModal({
     title: '清除所有数据',
-    content: '此操作将清除所有收藏、训练计划和训练记录，不可恢复！',
-    success: (res) => {
+    content: '此操作将清除本地所有收藏、训练计划和训练记录，云端数据将保留！',
+    success: async (res) => {
       if (res.confirm) {
         Taro.clearStorageSync()
-        Taro.showToast({ title: '已清除', icon: 'success' })
-        Taro.reLaunch({ url: '/pages/index/index' })
+        // 先重置 store 内存状态
+        recordStore.reset()
+        favoriteStore.reset()
+        planStore.reset()
+        // 再从云端同步数据
+        await Promise.all([
+          recordStore.syncFromCloud(),
+          favoriteStore.syncFromCloud(),
+          planStore.syncFromCloud(),
+        ])
+        console.log('同步后训练记录数:', recordStore.totalRecords)
+        console.log('同步后训练时长:', recordStore.totalDuration)
+        Taro.showToast({ title: `已清除，同步到${recordStore.totalRecords}条记录`, icon: 'success' })
       }
     },
   })
@@ -137,158 +195,234 @@ function clearAllData(): void {
 <style>
 .profile-page {
   min-height: 100vh;
-  background: #f8f8f8;
+  background: #f5f5f5;
+  padding-bottom: 32px;
 }
 
-.stats-hero {
-  padding: 24px 16px;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+/* 顶部头像区域 */
+.profile-header {
+  position: relative;
+  padding: 0 0 32px;
 }
 
-.stats-row {
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #3d3d3d 100%);
+  border-radius: 0 0 32px 32px;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  padding: 40px 24px 0;
+}
+
+.profile-info {
   display: flex;
-  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
 }
 
-.stat-box {
+.avatar-wrap {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.avatar-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+.profile-text {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 6px;
 }
 
-.stat-num {
-  font-size: 28px;
-  font-weight: 700;
+.profile-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.profile-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(76, 175, 80, 0.15);
+  border-radius: 20px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  width: fit-content;
+}
+
+.badge-icon {
   color: #4caf50;
 }
 
-.stat-label {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-top: 4px;
+.badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4caf50;
 }
 
-.section {
-  padding: 16px;
+/* 统计卡片 */
+.stats-section {
+  padding: 0 16px;
+  margin-top: -24px;
+  position: relative;
+  z-index: 2;
 }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 12px;
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-.record-list {
+.stat-card {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.record-card {
-  display: flex;
   align-items: center;
-  padding: 14px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  gap: 8px;
 }
 
-.record-date-badge {
+.stat-icon-wrap {
   width: 48px;
   height: 48px;
-  background: #e8f5e9;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.record-day {
-  font-size: 16px;
-  font-weight: 700;
-  color: #4caf50;
-  line-height: 1;
-}
-
-.record-month {
-  font-size: 9px;
-  color: #4caf50;
-  margin-top: 2px;
-}
-
-.record-info {
-  flex: 1;
-  margin-left: 12px;
-}
-
-.record-title {
-  font-size: 14px;
-  font-weight: 600;
+.stat-num {
+  font-size: 20px;
+  font-weight: 800;
   color: #1a1a1a;
 }
 
-.record-duration {
-  font-size: 12px;
-  color: #999;
-  margin-top: 2px;
+.stat-label {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
 }
 
-.record-delete {
-  padding: 6px;
+/* 功能入口 */
+.section {
+  padding: 24px 16px 0;
 }
 
-.delete-icon {
-  font-size: 16px;
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  padding-left: 4px;
 }
 
-.empty-records {
+.entry-cards {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.entry-card {
+  display: flex;
   align-items: center;
-  padding: 40px;
+  padding: 18px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+.entry-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.empty-text {
-  font-size: 14px;
+.entry-info {
+  flex: 1;
+  margin-left: 14px;
+}
+
+.entry-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.entry-desc {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.entry-arrow {
+  font-size: 24px;
+  color: #ccc;
+  flex-shrink: 0;
+  font-weight: 300;
+}
+
+/* 清除数据 */
+.clear-section {
+  padding: 40px 16px 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.clear-btn1 {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 24px;
+  border: 1px solid #eee;
+}
+
+.clear-icon {
   color: #999;
 }
 
-.settings-list {
-  background: #fff;
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.setting-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-.setting-item:last-child {
-  border-bottom: none;
-}
-
-.setting-label {
+.clear-text {
   font-size: 14px;
-  color: #333;
-}
-
-.setting-label.danger {
-  color: #ff4444;
-}
-
-.setting-arrow {
-  font-size: 18px;
-  color: #ccc;
+  font-weight: 500;
+  color: #999;
 }
 </style>

@@ -73,17 +73,19 @@ export const useRecordStore = defineStore('record', () => {
     syncing.value = true
     try {
       const cloudRecords = await cloudGet<CloudRecord>(CloudCollections.RECORDS)
+      console.log('云端训练记录:', cloudRecords)
       if (cloudRecords.length > 0) {
         const cloudMapTemp = new Map<string, string>()
         cloudRecords.forEach((cr) => {
-          cloudMapTemp.set(cr.recordId, cr._id)
-          const existing = records.value.find((r) => r.id === cr.recordId)
+          cloudMapTemp.set(cr.recordId || cr._id, cr._id)
+          const recordId = cr.recordId || cr._id
+          const existing = records.value.find((r) => r.id === recordId)
           if (!existing) {
             records.value.push({
-              id: cr.recordId,
-              date: cr.date,
-              exerciseIds: cr.exerciseIds,
-              duration: cr.duration,
+              id: recordId,
+              date: cr.date || new Date().toISOString().split('T')[0],
+              exerciseIds: cr.exerciseIds || [],
+              duration: cr.duration || 0,
               planId: cr.planId || undefined,
               completedAt: new Date().toISOString(),
             })
@@ -104,6 +106,11 @@ export const useRecordStore = defineStore('record', () => {
     setStorage(StorageKeys.RECORDS, records.value)
   }
 
+  function reset(): void {
+    records.value = []
+    cloudMap.value = new Map()
+  }
+
   return {
     records,
     totalRecords,
@@ -113,5 +120,6 @@ export const useRecordStore = defineStore('record', () => {
     deleteRecord,
     getRecordsByDate,
     syncFromCloud,
+    reset,
   }
 })

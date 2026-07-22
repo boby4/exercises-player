@@ -16,6 +16,7 @@ const pages = [
   'packageDetail/pages/detail/index.json',
   'packageDetail/pages/training/index.json',
   'packageDetail/pages/planDetail/index.json',
+  'packageDetail/pages/calculator/index.json',
 ]
 
 let updated = 0

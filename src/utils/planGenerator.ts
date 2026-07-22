@@ -21,6 +21,8 @@ export interface GeneratedPlan {
   name: string
   type: PlanType
   exercises: Exercise[]
+  warmupExercises: Exercise[]
+  cooldownExercises: Exercise[]
   goal: TrainingGoal
   duration: Duration
 }
@@ -120,14 +122,14 @@ const FOCUS_TO_PLAN_TYPE: Record<string, PlanType> = {
   fullbody: 'fullbody',
 }
 
-// 训练目标+时长 → 动作数量
+// 训练目标+时长 → 正式训练动作数量（不含热身和拉伸）
 const COUNT_MAP: Record<TrainingGoal, Record<Duration, number>> = {
-  muscle_gain: { '15min': 4, '30min': 6, '45min': 9, '60min': 12 },
-  fat_loss:    { '15min': 5, '30min': 7, '45min': 10, '60min': 14 },
-  strength:    { '15min': 3, '30min': 5, '45min': 7, '60min': 9 },
-  endurance:   { '15min': 5, '30min': 8, '45min': 11, '60min': 15 },
-  flexibility: { '15min': 4, '30min': 6, '45min': 8, '60min': 10 },
-  custom:      { '15min': 4, '30min': 6, '45min': 8, '60min': 10 },
+  muscle_gain: { '15min': 3, '30min': 4, '45min': 6, '60min': 8 },
+  fat_loss:    { '15min': 3, '30min': 5, '45min': 7, '60min': 10 },
+  strength:    { '15min': 3, '30min': 4, '45min': 5, '60min': 7 },
+  endurance:   { '15min': 3, '30min': 5, '45min': 8, '60min': 11 },
+  flexibility: { '15min': 3, '30min': 4, '45min': 6, '60min': 8 },
+  custom:      { '15min': 3, '30min': 4, '45min': 6, '60min': 8 },
 }
 
 // 力量训练优先器械
@@ -208,6 +210,55 @@ export function getCountByDuration(goal: TrainingGoal, duration: Duration): numb
   return COUNT_MAP[goal]?.[duration] || 6
 }
 
+// 热身动作关键词
+const WARMUP_KEYWORDS = ['jumping jack', 'arm circle', 'high knee', 'butt kick', 'lunge walk', 'hip circle', 'torso twist', 'ankle circle', 'wrist circle', 'cat cow']
+// 拉伸动作关键词
+const COOLDOWN_KEYWORDS = ['stretch', 'yoga', 'child pose', 'cobra', 'downward dog', 'pigeon', 'butterfly', 'hamstring stretch', 'quad stretch', 'chest stretch', 'shoulder stretch', 'tricep stretch', 'neck stretch']
+
+function getWarmupExercises(count: number, excludeIds: string[] = []): Exercise[] {
+  const allExercises = getAllExercises()
+  // 优先选择 cardio 分类的动作
+  const cardioExercises = allExercises.filter(ex => 
+    ex.body_part === 'cardio' && !excludeIds.includes(ex.id)
+  )
+  // 如果不够，选择 body weight 的动作
+  const bodyweightExercises = allExercises.filter(ex => 
+    ex.equipment === 'body weight' && 
+    !excludeIds.includes(ex.id) &&
+    !cardioExercises.find(c => c.id === ex.id)
+  )
+  
+  const pool = shuffleArray([...cardioExercises, ...bodyweightExercises])
+  return pool.slice(0, count)
+}
+
+function getCooldownExercises(count: number, excludeIds: string[] = []): Exercise[] {
+  const allExercises = getAllExercises()
+  // 选择包含 stretch/yoga 关键词的动作
+  const stretchExercises = allExercises.filter(ex => {
+    const nameLower = ex.name.toLowerCase()
+    return (nameLower.includes('stretch') || 
+            nameLower.includes('yoga') || 
+            nameLower.includes('child') ||
+            nameLower.includes('cobra') ||
+            nameLower.includes('downward') ||
+            ex.muscle_group === 'stretching' ||
+            ex.category === 'stretching') &&
+           !excludeIds.includes(ex.id)
+  })
+  
+  // 如果不够，选择 body weight 动作
+  const bodyweightExercises = allExercises.filter(ex => 
+    ex.equipment === 'body weight' && 
+    !excludeIds.includes(ex.id) &&
+    !stretchExercises.find(s => s.id === ex.id) &&
+    ['upper arms', 'upper legs', 'back', 'waist', 'chest', 'shoulders'].includes(ex.body_part)
+  )
+  
+  const pool = shuffleArray([...stretchExercises, ...bodyweightExercises])
+  return pool.slice(0, count)
+}
+
 export function generatePlan(options: GenerateOptions): GeneratedPlan {
   const { goal, bodyFocus, duration, location, preferredEquipment, excludeIds } = options
 
@@ -245,8 +296,9 @@ export function generatePlan(options: GenerateOptions): GeneratedPlan {
     poolByTarget[target] = shuffleArray(pool)
   }
 
-  // 5. 按肌群权重分配
-  const allocation = allocateByWeight(targets, totalCount)
+  // 5. 按肌群权重分配（正式训练动作）
+  const mainCount = totalCount // 正式训练动作数量
+  const allocation = allocateByWeight(targets, mainCount)
 
   // 6. 从每个池中采样
   const selected: Exercise[] = []
@@ -263,12 +315,27 @@ export function generatePlan(options: GenerateOptions): GeneratedPlan {
     return true
   })
 
-  // 8. 打乱顺序
+  // 8. 热身动作（1个）
+  const allIds = [...(excludeIds || []), ...deduped.map(e => e.id)]
+  const warmupExercises = getWarmupExercises(1, allIds)
+
+  // 9. 拉伸动作（1个）
+  const cooldownExercises = getCooldownExercises(1, [...allIds, ...warmupExercises.map(e => e.id)])
+
+  // 10. 打乱正式训练动作顺序
   const shuffled = shuffleArray(deduped)
 
-  // 9. 推断 PlanType 和生成名称
+  // 11. 推断 PlanType 和生成名称
   const planType = inferPlanType(bodyFocus)
   const name = generatePlanName(goal, bodyFocus)
 
-  return { name, type: planType, exercises: shuffled, goal, duration }
+  return { 
+    name, 
+    type: planType, 
+    exercises: shuffled, 
+    warmupExercises,
+    cooldownExercises,
+    goal, 
+    duration 
+  }
 }

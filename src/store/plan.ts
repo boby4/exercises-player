@@ -145,6 +145,11 @@ export const usePlanStore = defineStore('plan', () => {
     setStorage(StorageKeys.PLANS, plans.value)
   }
 
+  function reset(): void {
+    plans.value = []
+    cloudMap.value = new Map()
+  }
+
   return {
     plans,
     planCount,
@@ -155,5 +160,6 @@ export const usePlanStore = defineStore('plan', () => {
     deletePlan,
     getPlanById,
     syncFromCloud,
+    reset,
   }
 })

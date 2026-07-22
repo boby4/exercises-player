@@ -6,6 +6,7 @@ export const CloudCollections = {
   FAVORITES: 'favorites',
   PLANS: 'plans',
   RECORDS: 'records',
+  BODY_DATA: 'bodyData',
 } as const
 
 let initialized = false

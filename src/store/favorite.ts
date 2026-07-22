@@ -80,6 +80,11 @@ export const useFavoriteStore = defineStore('favorite', () => {
     setStorage(StorageKeys.FAVORITES, favoriteIds.value)
   }
 
+  function reset(): void {
+    favoriteIds.value = []
+    cloudMap.value = new Map()
+  }
+
   return {
     favoriteIds,
     count,
@@ -88,5 +93,6 @@ export const useFavoriteStore = defineStore('favorite', () => {
     toggleFavorite,
     removeFavorite,
     syncFromCloud,
+    reset,
   }
 })

@@ -6,7 +6,7 @@
         <text class="create-icon">+</text>
         <text class="create-text">创建训练计划</text>
       </view>
-      <view class="generate-btn" @tap="showGenerator = true">
+      <view class="generate-btn" @tap="goGenerator">
         <text class="generate-icon">✨</text>
         <text class="generate-text">智能生成</text>
       </view>
@@ -135,14 +135,12 @@
       </view>
     </view>
 
-    <!-- 智能生成弹窗 -->
-    <PlanGenerator :visible="showGenerator" @close="showGenerator = false" @saved="onGeneratorSaved" />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
 import { usePlanStore } from '@/store/plan'
 import { useRecordStore } from '@/store/record'
@@ -150,30 +148,25 @@ import { useShare } from '@/hooks/useShare'
 import { getExerciseById, getExerciseNameZh } from '@/utils/data'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
 import type { PlanType } from '@/types/exercise'
-import PlanGenerator from '@/components/PlanGenerator/index.vue'
 
 const planStore = usePlanStore()
 const recordStore = useRecordStore()
 const showCreateModal = ref(false)
-const showGenerator = ref(false)
 
 useShare({
   title: '定制你的训练计划 - ExercisesPlayer',
   path: '/pages/plan/index',
+})
+
+// 页面显示时从云端同步数据
+useDidShow(() => {
+  recordStore.syncFromCloud()
 })
 const newPlanName = ref('')
 const newPlanType = ref<PlanType>('push')
 const selectedType = ref('')
 
 watch(showCreateModal, (val) => {
-  if (val) {
-    Taro.hideTabBar({ animation: false })
-  } else {
-    Taro.showTabBar({ animation: false })
-  }
-})
-
-watch(showGenerator, (val) => {
   if (val) {
     Taro.hideTabBar({ animation: false })
   } else {
@@ -253,8 +246,8 @@ function startPlanTraining(planId: string): void {
   }
 }
 
-function onGeneratorSaved(): void {
-  showGenerator.value = false
+function goGenerator(): void {
+  Taro.navigateTo({ url: '/packageDetail/pages/generator/index' })
 }
 
 function deletePlan(planId: string): void {
