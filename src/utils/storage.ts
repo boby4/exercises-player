@@ -8,6 +8,7 @@ export const StorageKeys = {
   SETTINGS: 'ep_settings',
   TIMER_DURATION: 'ep_timer_duration',
   BODY_DATA: 'ep_body_data',
+  ACHIEVEMENTS: 'ep_achievements',
 } as const
 
 export function getStorage<T>(key: string): T | null {

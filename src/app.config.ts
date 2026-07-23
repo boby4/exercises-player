@@ -17,6 +17,7 @@ export default defineAppConfig({
         'pages/calculator/index',
         'pages/about/index',
         'pages/generator/index',
+        'pages/achievement/index',
       ],
     },
   ],

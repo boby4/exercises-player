@@ -14,8 +14,8 @@
             <text class="profile-title">ExercisesPlayer</text>
             <text class="profile-desc">你的专属健身搭子</text>
             <view class="profile-badge">
-              <IconFont name="icon-jirounan" :size="12" class="badge-icon" />
-              <text class="badge-text">健身达人</text>
+              <text class="badge-icon-text">{{ currentLevel.icon }}</text>
+              <text class="badge-text">{{ currentLevel.name }}</text>
             </view>
           </view>
         </view>
@@ -60,8 +60,18 @@
     <view class="section">
       <text class="section-title">功能服务</text>
       <view class="entry-cards">
-        <view class="entry-card" @tap="goGenerator">
+        <view class="entry-card" @tap="goAchievement">
           <view class="entry-icon-box" style="background: #fff8e1">
+            <IconFont name="icon-jirounan" :size="20" style="color: #ff9800" />
+          </view>
+          <view class="entry-info">
+            <view class="entry-title">我的成就</view>
+            <view class="entry-desc">已解锁 {{ achievementStore.unlockedCount }}/{{ achievementStore.totalCount }} 个成就</view>
+          </view>
+          <text class="entry-arrow">›</text>
+        </view>
+        <view class="entry-card" @tap="goGenerator">
+          <view class="entry-icon-box" style="background: #fff3e0">
             <IconFont name="icon-jianshenbao" :size="20" style="color: #ff9800" />
           </view>
           <view class="entry-info">
@@ -71,8 +81,8 @@
           <text class="entry-arrow">›</text>
         </view>
         <view class="entry-card" @tap="goCalculator">
-          <view class="entry-icon-box" style="background: #fff3e0">
-            <IconFont name="icon-chengzhong" :size="20" style="color: #ff9800" />
+          <view class="entry-icon-box" style="background: #e3f2fd">
+            <IconFont name="icon-chengzhong" :size="20" style="color: #2196f3" />
           </view>
           <view class="entry-info">
             <view class="entry-title">健康计算器</view>
@@ -81,8 +91,8 @@
           <text class="entry-arrow">›</text>
         </view>
         <view class="entry-card" @tap="goAbout">
-          <view class="entry-icon-box" style="background: #e3f2fd">
-            <IconFont name="icon-jiankangshipin" :size="20" style="color: #2196f3" />
+          <view class="entry-icon-box" style="background: #e8f5e9">
+            <IconFont name="icon-jiankangshipin" :size="20" style="color: #4caf50" />
           </view>
           <view class="entry-info">
             <view class="entry-title">关于我们</view>
@@ -101,6 +111,9 @@
       </view>
     </view>
 
+    <!-- 成就弹窗 -->
+    <AchievementPopup />
+    
   </view>
 </template>
 
@@ -108,14 +121,20 @@
 import { computed } from 'vue'
 import Taro, { useDidShow } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import { useRecordStore } from '@/store/record'
 import { useFavoriteStore } from '@/store/favorite'
 import { usePlanStore } from '@/store/plan'
+import { useAchievementStore } from '@/store/achievement'
 import { useShare } from '@/hooks/useShare'
 
 const recordStore = useRecordStore()
 const favoriteStore = useFavoriteStore()
 const planStore = usePlanStore()
+const achievementStore = useAchievementStore()
+
+// 获取当前成就等级
+const currentLevel = computed(() => achievementStore.currentLevel)
 
 useShare({
   title: '我的健身数据 - ExercisesPlayer',
@@ -127,6 +146,8 @@ useDidShow(() => {
   recordStore.syncFromCloud()
   favoriteStore.syncFromCloud()
   planStore.syncFromCloud()
+  achievementStore.syncFromCloud()
+  achievementStore.checkAchievements()
 })
 
 const totalDurationText = computed(() => {
@@ -166,6 +187,10 @@ function goGenerator(): void {
   Taro.navigateTo({ url: '/packageDetail/pages/generator/index' })
 }
 
+function goAchievement(): void {
+  Taro.navigateTo({ url: '/packageDetail/pages/achievement/index' })
+}
+
 function clearAllData(): void {
   Taro.showModal({
     title: '清除所有数据',
@@ -177,11 +202,13 @@ function clearAllData(): void {
         recordStore.reset()
         favoriteStore.reset()
         planStore.reset()
+        achievementStore.reset()
         // 再从云端同步数据
         await Promise.all([
           recordStore.syncFromCloud(),
           favoriteStore.syncFromCloud(),
           planStore.syncFromCloud(),
+          achievementStore.syncFromCloud(),
         ])
         console.log('同步后训练记录数:', recordStore.totalRecords)
         console.log('同步后训练时长:', recordStore.totalDuration)
@@ -280,8 +307,8 @@ function clearAllData(): void {
   width: fit-content;
 }
 
-.badge-icon {
-  color: #4caf50;
+.badge-icon-text {
+  font-size: 14px;
 }
 
 .badge-text {
@@ -325,8 +352,8 @@ function clearAllData(): void {
 }
 
 .stat-num {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 19px;
+  font-weight: 650;
   color: #1a1a1a;
 }
 
@@ -401,7 +428,7 @@ function clearAllData(): void {
 
 /* 清除数据 */
 .clear-section {
-  padding: 40px 16px 32px;
+  padding: 40px 16px 0 32px;
   display: flex;
   justify-content: center;
 }

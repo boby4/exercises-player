@@ -1,21 +1,54 @@
 <template>
   <view class="plan-page">
-    <!-- 创建计划按钮 -->
-    <view class="create-section">
+    <!-- 顶部渐变头部 -->
+    <view class="header">
+      <view class="header-bg"></view>
+      <view class="header-content">
+        <view class="header-left">
+          <text class="header-title">训练计划</text>
+          <text class="header-desc">定制你的专属训练方案</text>
+        </view>
+        <view class="header-stats">
+          <view class="stat-item">
+            <text class="stat-num">{{ planStore.plans.length }}</text>
+            <text class="stat-label">计划总数</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-num">{{ totalTrainedCount }}</text>
+            <text class="stat-label">已训练</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮区域 -->
+    <view class="action-section">
       <view class="create-btn" @tap="showCreateModal = true">
-        <text class="create-icon">+</text>
-        <text class="create-text">创建训练计划</text>
+        <view class="create-icon-wrap">
+          <text class="create-icon">+</text>
+        </view>
+        <text class="create-text">创建计划</text>
       </view>
       <view class="generate-btn" @tap="goGenerator">
-        <text class="generate-icon">✨</text>
+        <view class="generate-icon-wrap">
+          <text class="generate-icon">✨</text>
+        </view>
         <text class="generate-text">智能生成</text>
       </view>
     </view>
 
     <!-- 计划类型选择 -->
-    <scroll-view :scroll-x="true" :show-scrollbar="true" :enhanced="true" class="type-scroll">
-      <view class="type-inner">
+    <view class="type-section">
+      <scroll-view :scroll-x="true" :show-scrollbar="false" class="type-scroll">
         <view class="type-list">
+          <view
+            class="type-chip"
+            :class="{ active: selectedType === '' }"
+            @tap="selectType('')"
+          >
+            <text class="type-label">全部</text>
+          </view>
           <view
             v-for="pt in planTypes"
             :key="pt.key"
@@ -23,64 +56,73 @@
             :class="{ active: selectedType === pt.key }"
             @tap="selectType(pt.key)"
           >
-            <IconFont :name="pt.icon" :size="20" class="type-icon" />
+            <IconFont :name="pt.icon" :size="16" class="type-icon" />
             <text class="type-label">{{ pt.label }}</text>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
+    </view>
 
     <!-- 计划列表 -->
     <view v-if="filteredPlans.length > 0" class="plan-list">
       <view v-for="plan in filteredPlans" :key="plan.id" class="plan-card" @tap="openPlan(plan.id)">
-        <view class="plan-accent" :class="'accent-' + plan.type"></view>
-        <view class="plan-body">
-          <view class="plan-row1">
+        <view class="plan-card-header">
+          <view class="plan-icon-wrap" :class="'icon-' + plan.type">
+            <IconFont :name="getTypeIcon(plan.type)" :size="20" style="color: #fff" />
+          </view>
+          <view class="plan-title-area">
             <text class="plan-name">{{ plan.name }}</text>
-            <view class="plan-type-badge">
-              <IconFont :name="getTypeIcon(plan.type)" :size="16" class="plan-type-icon" />
-              <text class="plan-type-text">{{ getTypeLabel(plan.type) }}</text>
+            <view class="plan-type-tag" :class="'tag-' + plan.type">
+              <text class="type-tag-text">{{ getTypeLabel(plan.type) }}</text>
             </view>
           </view>
-          <view class="plan-row2">
-            <text class="plan-count">{{ plan.exerciseIds.length }} 个动作</text>
-            <text class="plan-sep">·</text>
-            <text class="plan-date">{{ formatDate(plan.updatedAt) }}</text>
-            <view
-              class="plan-status"
-              :class="getPlanRecordInfo(plan.id).count > 0 ? 'status-trained' : 'status-new'"
-            >
-              <text class="plan-status-text">
-                {{ getPlanRecordInfo(plan.id).count > 0 ? '已练' + getPlanRecordInfo(plan.id).count + '次' : '未开始' }}
-              </text>
-            </view>
+          <view class="plan-status" :class="getPlanRecordInfo(plan.id).count > 0 ? 'status-trained' : 'status-new'">
+            <text class="status-text">
+              {{ getPlanRecordInfo(plan.id).count > 0 ? '已练' + getPlanRecordInfo(plan.id).count + '次' : '未开始' }}
+            </text>
           </view>
-          <view v-if="plan.exerciseIds.length > 0" class="plan-chips">
-            <view
-              v-for="exId in plan.exerciseIds.slice(0, 3)"
-              :key="exId"
-              class="plan-exercise-chip"
-            >
-              <text class="plan-exercise-name">{{ getExerciseName(exId) }}</text>
-            </view>
-            <view v-if="plan.exerciseIds.length > 3" class="plan-exercise-chip more-chip">
-              <text class="more-text">+{{ plan.exerciseIds.length - 3 }}</text>
-            </view>
+        </view>
+        
+        <view class="plan-info-row">
+          <view class="info-item">
+            <IconFont name="icon-jianshenqixie" :size="14" style="color: #999" />
+            <text class="info-text">{{ plan.exerciseIds.length }} 个动作</text>
           </view>
-          <view class="plan-footer">
-            <view class="action-btn plan-start-btn" @tap.stop="startPlanTraining(plan.id)">
-              <text class="action-label">&#x25B6; 开始训练</text>
-            </view>
-            <view class="action-btn del-btn" @tap.stop="deletePlan(plan.id)">
-              <text class="del-label">删除</text>
-            </view>
+          <view class="info-item">
+            <IconFont name="icon-tice" :size="14" style="color: #999" />
+            <text class="info-text">{{ formatDate(plan.updatedAt) }}</text>
+          </view>
+        </view>
+
+        <view v-if="plan.exerciseIds.length > 0" class="plan-chips">
+          <view
+            v-for="exId in plan.exerciseIds.slice(0, 3)"
+            :key="exId"
+            class="exercise-chip"
+          >
+            <text class="chip-text">{{ getExerciseName(exId) }}</text>
+          </view>
+          <view v-if="plan.exerciseIds.length > 3" class="exercise-chip more-chip">
+            <text class="more-text">+{{ plan.exerciseIds.length - 3 }}</text>
+          </view>
+        </view>
+
+        <view class="plan-actions">
+          <view class="start-btn" @tap.stop="startPlanTraining(plan.id)">
+            <text class="start-text">&#x25B6; 开始训练</text>
+          </view>
+          <view class="detail-btn" @tap.stop="openPlan(plan.id)">
+            <text class="detail-text">详情</text>
+          </view>
+          <view class="delete-btn" @tap.stop="deletePlan(plan.id)">
+            <text class="delete-text">删除</text>
           </view>
         </view>
       </view>
     </view>
 
     <view v-else class="empty-state">
-      <IconFont name="icon-jianshenbao" :size="48" class="empty-icon" />
+      <IconFont name="icon-jianshenbao" :size="64" style="color: #ddd" />
       <text class="empty-title">暂无训练计划</text>
       <text class="empty-desc">创建一个计划开始你的训练之旅</text>
     </view>
@@ -88,15 +130,13 @@
     <!-- 创建弹窗 -->
     <view v-if="showCreateModal" class="modal-overlay" @tap="showCreateModal = false">
       <view class="modal-content" @tap.stop>
-        <!-- 头部 -->
         <view class="modal-header">
           <text class="modal-title">创建训练计划</text>
           <view class="modal-close" @tap="showCreateModal = false">
-            <text class="modal-close-icon">&#x2715;</text>
+            <text class="close-icon">&#x2715;</text>
           </view>
         </view>
 
-        <!-- 名称 -->
         <view class="modal-section">
           <text class="modal-label">计划名称</text>
           <input
@@ -106,35 +146,34 @@
           />
         </view>
 
-        <!-- 类型 -->
         <view class="modal-section">
           <text class="modal-label">训练类型</text>
           <view class="modal-type-grid">
             <view
               v-for="pt in planTypes"
               :key="pt.key"
-              class="modal-type-chip"
+              class="modal-type-item"
               :class="{ active: newPlanType === pt.key }"
               @tap="newPlanType = pt.key"
             >
-              <IconFont :name="pt.icon" :size="24" class="modal-type-icon" />
-              <text class="modal-type-label">{{ pt.label }}</text>
+              <IconFont :name="pt.icon" :size="20" class="modal-type-icon" />
+              <text class="modal-type-name">{{ pt.label }}</text>
             </view>
           </view>
         </view>
 
-        <!-- 按钮 -->
         <view class="modal-actions">
           <view class="modal-cancel" @tap="showCreateModal = false">
-            <text class="modal-cancel-text">取消</text>
+            <text class="cancel-text">取消</text>
           </view>
           <view class="modal-confirm" @tap="createPlan">
-            <text class="modal-confirm-text">创建计划</text>
+            <text class="confirm-text">创建计划</text>
           </view>
         </view>
       </view>
     </view>
 
+    <AchievementPopup />
   </view>
 </template>
 
@@ -142,8 +181,10 @@
 import { ref, computed, watch } from 'vue'
 import Taro, { useDidShow } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import { usePlanStore } from '@/store/plan'
 import { useRecordStore } from '@/store/record'
+import { useAchievementStore } from '@/store/achievement'
 import { useShare } from '@/hooks/useShare'
 import { getExerciseById, getExerciseNameZh } from '@/utils/data'
 import { PLAN_TYPE_LABELS } from '@/types/exercise'
@@ -151,6 +192,7 @@ import type { PlanType } from '@/types/exercise'
 
 const planStore = usePlanStore()
 const recordStore = useRecordStore()
+const achievementStore = useAchievementStore()
 const showCreateModal = ref(false)
 
 useShare({
@@ -158,10 +200,10 @@ useShare({
   path: '/pages/plan/index',
 })
 
-// 页面显示时从云端同步数据
 useDidShow(() => {
   recordStore.syncFromCloud()
 })
+
 const newPlanName = ref('')
 const newPlanType = ref<PlanType>('push')
 const selectedType = ref('')
@@ -184,6 +226,13 @@ const planTypes: Array<{ key: PlanType; label: string; icon: string }> = [
   { key: 'custom', label: '自定义', icon: 'icon-jianshenqixie' },
 ]
 
+const totalTrainedCount = computed(() => {
+  return planStore.plans.reduce((sum, plan) => {
+    const recordInfo = getPlanRecordInfo(plan.id)
+    return sum + recordInfo.count
+  }, 0)
+})
+
 const filteredPlans = computed(() => {
   if (!selectedType.value) return planStore.plans
   return planStore.plans.filter((p) => p.type === selectedType.value)
@@ -195,7 +244,7 @@ function getTypeLabel(type: PlanType): string {
 
 function getTypeIcon(type: PlanType): string {
   const found = planTypes.find((pt) => pt.key === type)
-  return found?.icon || '✨'
+  return found?.icon || 'icon-jianshenqixie'
 }
 
 function getExerciseName(id: string): string {
@@ -205,7 +254,7 @@ function getExerciseName(id: string): string {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
+  return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
 function getPlanRecordInfo(planId: string): { count: number; lastDate: string } {
@@ -218,7 +267,7 @@ function getPlanRecordInfo(planId: string): { count: number; lastDate: string } 
 }
 
 function selectType(type: string): void {
-  selectedType.value = selectedType.value === type ? '' : type
+  selectedType.value = type
 }
 
 function createPlan(): void {
@@ -231,6 +280,7 @@ function createPlan(): void {
   newPlanType.value = 'push'
   showCreateModal.value = false
   Taro.showToast({ title: '创建成功', icon: 'success' })
+  achievementStore.checkAchievements()
 }
 
 function openPlan(planId: string): void {
@@ -267,274 +317,358 @@ function deletePlan(planId: string): void {
 <style>
 .plan-page {
   min-height: 100vh;
-  background: #f5f6f8;
+  background: #f8f9fa;
   padding-bottom: 20px;
 }
 
-.create-section {
-  padding: 16px 16px 12px;
-  display: flex;
-  gap: 10px;
+/* 顶部渐变头部 */
+.header {
+  position: relative;
+  padding: 0 0 12px;
 }
 
-.create-btn {
-  flex: 1;
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #3d3d3d 100%);
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  padding: 12px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.header-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  display: block;
+}
+
+.header-stats {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 48px;
-  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-  border-radius: 24px;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 8px 12px;
 }
 
-.create-icon {
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px;
+}
+
+.stat-num {
   font-size: 18px;
+  font-weight: 800;
   color: #fff;
-  font-weight: 700;
-  line-height: 1;
 }
 
-.create-text {
-  font-size: 15px;
-  color: #fff;
-  font-weight: 600;
-  line-height: 1;
+.stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
+.stat-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 操作按钮区域 */
+.action-section {
+  padding: 0 16px;
+  margin-top: 12px;
+  display: flex;
+}
+
+.action-section > view + view {
+  margin-left: 12px;
+}
+
+.create-btn,
 .generate-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 48px;
-  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
-  border-radius: 24px;
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+  height: 52px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+.create-icon-wrap,
+.generate-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.create-icon-wrap {
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.generate-icon-wrap {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+.create-icon,
 .generate-icon {
-  font-size: 16px;
+  font-size: 18px;
+  color: #fff;
+  font-weight: 700;
   line-height: 1;
 }
 
+.create-text,
 .generate-text {
   font-size: 15px;
-  color: #fff;
+  color: #1a1a1a;
   font-weight: 600;
-  line-height: 1;
+}
+
+/* 类型选择器 */
+.type-section {
+  margin-top: 20px;
 }
 
 .type-scroll {
   width: 100%;
-  margin-bottom: 12px;
-}
-
-.type-inner {
-  padding: 0 16px;
 }
 
 .type-list {
   display: flex;
   flex-wrap: nowrap;
-  gap: 8px;
-  padding-right: 16px;
+  padding: 0 16px;
 }
 
 .type-chip {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 8px 12px;
+  padding: 4px 8px;
   background: #fff;
-  border-radius: 12px;
-  border: 1PX solid #eee;
+  border-radius: 8px;
+  border: 1px solid #eee;
   flex-shrink: 0;
-  min-width: 56px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  margin-right: 6px;
 }
 
 .type-chip.active {
+  background: #4caf50;
   border-color: #4caf50;
-  background: #e8f5e9;
-  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 .type-icon {
-  font-size: 18px;
-  margin-bottom: 3px;
+  font-size: 12px;
   line-height: 1;
+  margin-right: 3px;
 }
 
 .type-label {
-  font-size: 10px;
-  color: #888;
-  line-height: 1.2;
+  font-size: 12px;
+  color: #666;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .type-chip.active .type-label {
-  color: #4caf50;
+  color: #fff;
   font-weight: 600;
 }
 
+/* 计划列表 */
 .plan-list {
-  padding: 0 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+}
+
+.plan-list > view + view {
+  margin-top: 12px;
 }
 
 .plan-card {
-  display: flex;
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-.plan-accent {
-  width: 4px;
-  background: #4caf50;
+.plan-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.plan-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
   flex-shrink: 0;
 }
 
-.accent-push { background: #4caf50; }
-.accent-pull { background: #2196f3; }
-.accent-leg { background: #ff9800; }
-.accent-upper { background: #9c27b0; }
-.accent-lower { background: #00bcd4; }
-.accent-fullbody { background: #e91e63; }
-.accent-custom { background: #607d8b; }
+.icon-push { background: linear-gradient(135deg, #4caf50, #66bb6a); }
+.icon-pull { background: linear-gradient(135deg, #2196f3, #42a5f5); }
+.icon-leg { background: linear-gradient(135deg, #ff9800, #ffb74d); }
+.icon-upper { background: linear-gradient(135deg, #9c27b0, #ab47bc); }
+.icon-lower { background: linear-gradient(135deg, #00bcd4, #26c6da); }
+.icon-fullbody { background: linear-gradient(135deg, #e91e63, #ec407a); }
+.icon-custom { background: linear-gradient(135deg, #607d8b, #78909c); }
 
-.plan-body {
+.plan-title-area {
   flex: 1;
-  padding: 10px 12px;
   min-width: 0;
 }
 
-.plan-row1 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-}
-
 .plan-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #1a1a1a;
-  line-height: 1.3;
-  flex: 1;
+  margin-bottom: 4px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: block;
 }
 
-.plan-type-badge {
+.plan-type-tag {
   display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 6px;
   align-items: center;
-  gap: 3px;
-  padding: 6px 8px;
-  background: #e8f5e9;
-  border-radius: 4px;
-  flex-shrink: 0;
+  justify-content: center;
 }
 
-.plan-type-icon {
+.tag-push { background: #e8f5e9; }
+.tag-pull { background: #e3f2fd; }
+.tag-leg { background: #fff3e0; }
+.tag-upper { background: #f3e5f5; }
+.tag-lower { background: #e0f7fa; }
+.tag-fullbody { background: #fce4ec; }
+.tag-custom { background: #eceff1; }
+
+.type-tag-text {
   font-size: 11px;
-  line-height: 1;
-}
-
-.plan-type-text {
-  font-size: 10px;
-  color: #4caf50;
   font-weight: 600;
   line-height: 1;
 }
 
-.plan-row2 {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 4px;
-}
-
-.plan-count {
-  font-size: 11px;
-  color: #4caf50;
-  line-height: 1.2;
-}
-
-.plan-sep {
-  font-size: 11px;
-  color: #ddd;
-  line-height: 1.2;
-}
-
-.plan-date {
-  font-size: 11px;
-  color: #bbb;
-  line-height: 1.2;
-}
+.tag-push .type-tag-text { color: #4caf50; }
+.tag-pull .type-tag-text { color: #2196f3; }
+.tag-leg .type-tag-text { color: #ff9800; }
+.tag-upper .type-tag-text { color: #9c27b0; }
+.tag-lower .type-tag-text { color: #00bcd4; }
+.tag-fullbody .type-tag-text { color: #e91e63; }
+.tag-custom .type-tag-text { color: #607d8b; }
 
 .plan-status {
-  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
-  padding: 1px 6px;
-  border-radius: 6px;
-  margin-left: auto;
+  justify-content: center;
 }
 
-.plan-status.status-new {
-  background: #f5f6f8;
+.status-new {
+  background: #f5f5f5;
 }
 
-.plan-status.status-trained {
+.status-trained {
   background: #e8f5e9;
 }
 
-.plan-status-text {
-  font-size: 10px;
-  line-height: 1.3;
+.status-text {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
 }
 
-.status-new .plan-status-text {
+.status-new .status-text {
   color: #999;
 }
 
-.status-trained .plan-status-text {
+.status-trained .status-text {
   color: #4caf50;
-  font-weight: 600;
+}
+
+.plan-info-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+  line-height: 1;
+}
+
+.info-text {
+  font-size: 12px;
+  color: #666;
+  line-height: 1;
 }
 
 .plan-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  margin-bottom: 12px;
 }
 
-.plan-exercise-chip {
-  display: inline-flex;
+.exercise-chip {
+  padding: 4px 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  display: flex;
   align-items: center;
-  padding: 3px 10px;
-  background: #f0f4f8;
-  border-radius: 10px;
+  justify-content: center;
 }
 
-.plan-exercise-name {
-  font-size: 10px;
+.chip-text {
+  font-size: 11px;
   color: #666;
-  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 90px;
+  max-width: 80px;
+  display: block;
+  line-height: 1;
 }
 
 .more-chip {
@@ -542,231 +676,245 @@ function deletePlan(planId: string): void {
 }
 
 .more-text {
-  font-size: 10px;
+  font-size: 11px;
   color: #4caf50;
   font-weight: 600;
-  line-height: 1.3;
 }
 
-.plan-footer {
+.plan-actions {
+  display: flex;
+}
+
+.plan-actions > view + view {
+  margin-left: 8px;
+}
+
+.start-btn {
+  flex: 1;
+  height: 36px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-
-.plan-start-btn {
-  flex: 1;
-  height: 30px;
   background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  border-radius: 12px;
 }
 
-.action-label {
-  font-size: 11px;
+.start-text {
+  font-size: 13px;
   color: #fff;
   font-weight: 600;
   line-height: 1;
 }
 
-.del-btn {
-  height: 30px;
-  padding: 0 12px;
-  background: #f5f6f8;
+.detail-btn {
+  height: 36px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 12px;
 }
 
-.del-label {
-  font-size: 11px;
-  color: #bbb;
+.detail-text {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
   line-height: 1;
 }
 
+.delete-btn {
+  height: 36px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff5f5;
+  border-radius: 12px;
+}
+
+.delete-text {
+  font-size: 13px;
+  color: #f44336;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* 空状态 */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px 32px;
-}
-
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  line-height: 1;
+  padding: 60px 32px;
 }
 
 .empty-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: #333;
-  margin-bottom: 6px;
-  line-height: 1.3;
+  margin-top: 16px;
+  margin-bottom: 8px;
 }
 
 .empty-desc {
-  font-size: 12px;
-  color: #bbb;
-  line-height: 1.4;
+  font-size: 14px;
+  color: #999;
 }
 
+/* 弹窗 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: flex-end;
-  justify-content: center;
   z-index: 10000;
 }
 
 .modal-content {
   width: 100%;
-  padding: 0 20px 28px;
-  padding-bottom: calc(28px + env(safe-area-inset-bottom));
   background: #fff;
-  border-radius: 20px 20px 0 0;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 0 10px;
-  border-bottom: 1PX solid #f0f0f0;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .modal-title {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: #1a1a1a;
-  line-height: 1.3;
 }
 
 .modal-close {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  background: #f5f6f8;
-  flex-shrink: 0;
 }
 
-.modal-close-icon {
-  font-size: 11px;
-  color: #aaa;
-  line-height: 1;
+.close-icon {
+  font-size: 14px;
+  color: #999;
 }
 
 .modal-section {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .modal-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  color: #555;
-  margin-bottom: 6px;
-  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
 }
 
 .modal-input {
   width: 100%;
-  padding: 10px 14px;
-  background: #f5f6f8;
-  border-radius: 10px;
-  font-size: 14px;
+  height: 48px;
+  padding: 0 16px;
+  background: #f5f5f5;
+  border-radius: 14px;
+  font-size: 15px;
   color: #1a1a1a;
-  border: 1PX solid #eee;
-  line-height: 1.4;
+  border: 1.5px solid transparent;
+}
+
+.modal-input:focus {
+  border-color: #4caf50;
+  background: #fff;
 }
 
 .modal-type-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
 }
 
-.modal-type-chip {
-  display: inline-flex;
+.modal-type-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 7px 12px;
-  background: #f5f6f8;
-  border-radius: 18px;
-  border: 1PX solid #eee;
-  flex-shrink: 0;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-radius: 14px;
+  border: 1.5px solid transparent;
+  min-width: 70px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
-.modal-type-chip.active {
+.modal-type-item.active {
   background: #e8f5e9;
   border-color: #4caf50;
-  box-shadow: 0 1px 4px rgba(76, 175, 80, 0.15);
 }
 
 .modal-type-icon {
-  font-size: 13px;
-  line-height: 1;
+  font-size: 20px;
+  margin-bottom: 4px;
 }
 
-.modal-type-label {
-  font-size: 11px;
-  color: #888;
-  line-height: 1.2;
-  white-space: nowrap;
+.modal-type-name {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
 }
 
-.modal-type-chip.active .modal-type-label {
+.modal-type-item.active .modal-type-name {
   color: #4caf50;
   font-weight: 600;
 }
 
 .modal-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 4px;
+  margin-top: 24px;
+}
+
+.modal-actions > view + view {
+  margin-left: 12px;
 }
 
 .modal-cancel {
   flex: 1;
-  height: 42px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f6f8;
-  border-radius: 21px;
+  background: #f5f5f5;
+  border-radius: 25px;
 }
 
-.modal-cancel-text {
-  font-size: 13px;
-  color: #999;
-  font-weight: 500;
+.cancel-text {
+  font-size: 15px;
+  color: #666;
+  font-weight: 600;
 }
 
 .modal-confirm {
   flex: 2;
-  height: 42px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-  border-radius: 21px;
-  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.25);
+  border-radius: 25px;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
 }
 
-.modal-confirm-text {
-  font-size: 13px;
+.confirm-text {
+  font-size: 15px;
   color: #fff;
   font-weight: 600;
 }

@@ -17,94 +17,79 @@
     <!-- 核心功能 -->
     <view class="section">
       <text class="section-title">核心功能</text>
-      <view class="feature-list">
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(76, 175, 80, 0.1)">
-            <IconFont name="icon-jianshenqixie" :size="24" style="color: #4caf50" />
+      <view class="feature-grid">
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-jianshenqixie" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">1324 个健身动作</view>
-            <view class="feature-desc">覆盖全身肌群，专业动作指导</view>
-          </view>
+          <text class="feature-name">海量动作库</text>
+          <text class="feature-count">1324+</text>
+          <text class="feature-desc">覆盖全身肌群</text>
         </view>
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(33, 150, 243, 0.1)">
-            <IconFont name="icon-paobu" :size="24" style="color: #2196f3" />
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-jishiqi" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">训练记录追踪</view>
-            <view class="feature-desc">记录每次训练，见证你的进步</view>
-          </view>
+          <text class="feature-name">训练记录</text>
+          <text class="feature-count">可视化</text>
+          <text class="feature-desc">追踪每次进步</text>
         </view>
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(244, 67, 54, 0.1)">
-            <IconFont name="icon-shoushen" :size="24" style="color: #f44336" />
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-shoushen" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">智能收藏系统</view>
-            <view class="feature-desc">收藏常用动作，快速开始训练</view>
-          </view>
+          <text class="feature-name">智能收藏</text>
+          <text class="feature-count">一键收藏</text>
+          <text class="feature-desc">常用动作速达</text>
         </view>
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(255, 152, 0, 0.1)">
-            <IconFont name="icon-jianshenbao" :size="24" style="color: #ff9800" />
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-jianshenbao" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">个性化训练计划</view>
-            <view class="feature-desc">Push/Pull/Leg 等多种训练模式</view>
-          </view>
+          <text class="feature-name">训练计划</text>
+          <text class="feature-count">AI 生成</text>
+          <text class="feature-desc">个性化定制</text>
         </view>
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(156, 39, 176, 0.1)">
-            <IconFont name="icon-jirounan" :size="24" style="color: #9c27b0" />
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-jirounan" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">肌肉群分类</view>
-            <view class="feature-desc">精准定位目标肌群，高效训练</view>
-          </view>
+          <text class="feature-name">肌群分类</text>
+          <text class="feature-count">精准定位</text>
+          <text class="feature-desc">高效训练</text>
         </view>
-        <view class="feature-item">
-          <view class="feature-icon-wrap" style="background: rgba(0, 150, 136, 0.1)">
-            <IconFont name="icon-yaling" :size="24" style="color: #009688" />
+        <view class="feature-card">
+          <view class="feature-icon-box">
+            <IconFont name="icon-chengzhong" :size="24" style="color: #333" />
           </view>
-          <view class="feature-info">
-            <view class="feature-title">器械分类筛选</view>
-            <view class="feature-desc">哑铃、杠铃、器械等多种分类</view>
-          </view>
+          <text class="feature-name">健康计算</text>
+          <text class="feature-count">BMI/BMR</text>
+          <text class="feature-desc">科学管理体重</text>
         </view>
       </view>
     </view>
 
-    <!-- 技术栈 -->
-    <!-- <view class="section">
-      <text class="section-title">技术架构</text>
-      <view class="tech-grid">
-        <view class="tech-item">
-          <text class="tech-name">Taro 4</text>
-          <text class="tech-desc">跨端框架</text>
+    <!-- 应用特色 -->
+    <view class="section">
+      <view class="highlight-list">
+        <view class="highlight-item">
+          <view class="highlight-dot"></view>
+          <text class="highlight-text">完全离线可用，无需网络</text>
         </view>
-        <view class="tech-item">
-          <text class="tech-name">Vue 3</text>
-          <text class="tech-desc">前端框架</text>
+        <view class="highlight-item">
+          <view class="highlight-dot"></view>
+          <text class="highlight-text">数据云端同步，多设备共享</text>
         </view>
-        <view class="tech-item">
-          <text class="tech-name">TypeScript</text>
-          <text class="tech-desc">类型安全</text>
+        <view class="highlight-item">
+          <view class="highlight-dot"></view>
+          <text class="highlight-text">专业动作指导，安全训练</text>
         </view>
-        <view class="tech-item">
-          <text class="tech-name">Pinia</text>
-          <text class="tech-desc">状态管理</text>
-        </view>
-        <view class="tech-item">
-          <text class="tech-name">UnoCSS</text>
-          <text class="tech-desc">原子化CSS</text>
-        </view>
-        <view class="tech-item">
-          <text class="tech-name">Vite</text>
-          <text class="tech-desc">构建工具</text>
+        <view class="highlight-item">
+          <view class="highlight-dot"></view>
+          <text class="highlight-text">智能计划生成，省时省力</text>
         </view>
       </view>
-    </view> -->
+    </view>
 
     <!-- 版权信息 -->
     <view class="footer">
@@ -192,81 +177,94 @@ import IconFont from '@/components/IconFont/index.vue'
   font-size: 20px;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding-left: 4px;
 }
 
-.feature-list {
+.feature-grid {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-wrap: wrap;
+  margin: -6px;
 }
 
-.feature-item {
-  display: flex;
-  align-items: center;
-  padding: 20px;
+.feature-card {
+  width: calc(33.333% - 12px);
+  margin: 6px;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 20px;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-.feature-icon-wrap {
-  width: 56px;
-  height: 56px;
+.feature-icon-box {
+  width: 52px;
+  height: 52px;
   border-radius: 16px;
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  margin-bottom: 12px;
 }
 
-.feature-info {
-  flex: 1;
-  margin-left: 16px;
+.feature-emoji {
+  font-size: 26px;
 }
 
-.feature-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.3;
-}
-
-.feature-desc {
-  font-size: 13px;
-  color: #666;
-  margin-top: 4px;
-  line-height: 1.5;
-}
-
-/* 技术栈 */
-.tech-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.tech-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px 8px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.tech-name {
+.feature-name {
   font-size: 14px;
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 4px;
+  text-align: center;
 }
 
-.tech-desc {
+.feature-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4caf50;
+  margin-bottom: 4px;
+}
+
+.feature-desc {
   font-size: 11px;
   color: #999;
+  text-align: center;
+}
+
+/* 应用特色 */
+.highlight-list {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.highlight-item:not(:last-child) {
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.highlight-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4caf50;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.highlight-text {
+  font-size: 15px;
+  color: #333;
 }
 
 /* 底部版权 */
@@ -275,12 +273,12 @@ import IconFont from '@/components/IconFont/index.vue'
   flex-direction: column;
   align-items: center;
   padding: 40px 24px 20px;
-  gap: 8px;
 }
 
 .copyright {
   font-size: 13px;
   color: #999;
+  margin-bottom: 8px;
 }
 
 .made-with {

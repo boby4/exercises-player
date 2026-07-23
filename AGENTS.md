@@ -64,16 +64,18 @@ exercises-player/
 │   │       ├── planDetail/ # 计划详情
 │   │       ├── calculator/ # 健康计算器
 │   │       ├── about/     # 关于我们
-│   │       └── generator/ # 智能生成训练计划
+│   │       ├── generator/ # 智能生成训练计划
+│   │       └── achievement/ # 成就系统
 │   ├── store/             # Pinia 状态
 │   │   ├── exercise.ts    # 动作数据 (ExerciseDB)
 │   │   ├── favorite.ts    # 收藏 + 云同步
 │   │   ├── plan.ts        # 训练计划 + 云同步
-│   │   └── record.ts      # 训练记录 + 云同步
+│   │   ├── record.ts      # 训练记录 + 云同步
+│   │   └── achievement.ts # 成就系统 + 云同步
 │   ├── styles/            # 全局样式
 │   │   └── iconfont.css   # IconFont 字体样式
 │   ├── types/             # TypeScript 类型定义
-│   │   └── exercise.ts    # Exercise/Plan/Record 类型
+│   │   └── exercise.ts    # Exercise/Plan/Record/Achievement 类型
 │   └── utils/             # 工具函数
 │       ├── cloud.ts       # 云开发封装 (仅小程序)
 │       ├── data.ts        # 数据加载/过滤
@@ -126,7 +128,7 @@ process.env.TARO_ENV === 'h5'     // H5
 // 调用方式
 {
   action: 'get' | 'add' | 'update' | 'delete',
-  collection: 'favorites' | 'plans' | 'records',
+  collection: 'favorites' | 'plans' | 'records' | 'achievements',
   data: { ... },     // add/update 时
   id: 'xxx'          // update/delete 时
 }
@@ -243,6 +245,38 @@ useShare(() => ({
 - `enableShareAppMessage/enableShareTimeline` 必须在**页面 JSON 配置**中设置（非 window 全局）
 - 构建后由 `scripts/patch-share-config.js` 自动注入到编译产物的页面 JSON
 - `build:weapp` 脚本已集成此补丁步骤
+
+### 11. 成就系统
+
+位于 `packageDetail/pages/achievement/index`，提供健身成就等级和徽章：
+
+**等级系统（时长+次数组合条件）：**
+
+| 等级 | 条件 | 图标 |
+|------|------|------|
+| 新手入门 | 训练 <10次 或 时长 <1小时 | 🌱 |
+| 初级健身者 | 训练 10-30次 且 时长 1-5小时 | 💪 |
+| 健身达人 | 训练 30-80次 且 时长 5-20小时 | 🏆 |
+| 健身专家 | 训练 80-200次 且 时长 20-50小时 | ⭐ |
+| 健身大师 | 训练 200+次 且 时长 50+小时 | 👑 |
+
+**成就徽章：**
+
+| 徽章 | 条件 |
+|------|------|
+| 收藏家 | 收藏 20+ 动作 |
+| 计划达人 | 创建 5+ 计划 |
+| 持久战士 | 训练 100+ 次 |
+
+**关键文件：**
+- `src/store/achievement.ts` — 成就状态管理
+- `src/packageDetail/pages/achievement/index.vue` — 成就页面 UI
+- `src/components/AchievementPopup/index.vue` — 成就达成动画弹窗
+
+**成就数据同步：**
+- 成就数据存储在 `achievements` 集合
+- 训练完成/收藏/创建计划时自动检测并更新
+- 达成成就时全局弹出动画提示
 
 ## 数据模型
 

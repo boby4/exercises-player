@@ -88,6 +88,28 @@ export interface FilterOptions {
   keyword?: string
 }
 
+// ==================== 成就系统 ====================
+
+export type AchievementCategory = 'training' | 'duration' | 'plan' | 'favorite' | 'streak'
+
+export interface Achievement {
+  id: string
+  name: string
+  description: string
+  icon: string
+  category: AchievementCategory
+  requirement: number
+  unit: string
+  unlockedAt?: string
+}
+
+export interface AchievementProgress {
+  achievementId: string
+  current: number
+  unlocked: boolean
+  unlockedAt?: string
+}
+
 export interface TimerPreset {
   label: string
   seconds: number

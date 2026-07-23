@@ -80,6 +80,9 @@
         </view>
       </view>
     </scroll-view>
+    
+    <!-- 成就弹窗 -->
+    <AchievementPopup />
   </view>
 </template>
 
@@ -90,7 +93,9 @@ import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import Tag from '@/components/Tag/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import { useExerciseStore } from '@/store/exercise'
+import { useAchievementStore } from '@/store/achievement'
 import { useSearch } from '@/hooks/useSearch'
 import { useShare } from '@/hooks/useShare'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
@@ -99,12 +104,13 @@ import { getAllExercises } from '@/utils/data'
 
 const exerciseStore = useExerciseStore()
 const router = useRouter()
+const achievementStore = useAchievementStore()
 
 useShare({
   title: '海量健身动作，一键搜索 - ExercisesPlayer',
   path: '/pages/search/index',
 })
-const listHeight = ref(600)
+const listHeight = ref(500)
 
 const {
   keyword,
@@ -185,11 +191,6 @@ function loadMore(): void {
     currentPage.value++
   }
 }
-
-onMounted(() => {
-  const sysInfo = Taro.getSystemInfoSync()
-  listHeight.value = sysInfo.windowHeight - 260
-})
 
 useDidShow(() => {
   // 检查来自首页的关键词搜索

@@ -7,6 +7,7 @@ export const CloudCollections = {
   PLANS: 'plans',
   RECORDS: 'records',
   BODY_DATA: 'bodyData',
+  ACHIEVEMENTS: 'achievements',
 } as const
 
 let initialized = false

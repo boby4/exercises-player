@@ -137,6 +137,9 @@
         </view>
       </view>
     </view>
+    
+    <!-- 成就弹窗 -->
+    <AchievementPopup />
   </view>
 </template>
 
@@ -144,16 +147,19 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Taro, { useRouter } from '@tarojs/taro'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import type { Exercise } from '@/types/exercise'
 import { getExerciseById, getExercisesByIds, getGifUrl, getExerciseNameZh } from '@/utils/data'
 import { useTimer } from '@/hooks/useTimer'
 import { useShare } from '@/hooks/useShare'
 import { useRecordStore } from '@/store/record'
 import { usePlanStore } from '@/store/plan'
+import { useAchievementStore } from '@/store/achievement'
 
 const router = useRouter()
 const recordStore = useRecordStore()
 const planStore = usePlanStore()
+const achievementStore = useAchievementStore()
 const statusBarHeight = ref(44)
 
 const exercises = ref<Exercise[]>([])
@@ -268,6 +274,8 @@ async function finishTraining(): Promise<void> {
     await recordStore.addRecord(exerciseIds, duration, planId)
     console.log('训练记录已保存，时长:', duration, '秒')
     Taro.showToast({ title: '训练已记录', icon: 'success' })
+    // 检测成就
+    await achievementStore.checkAchievements()
   } catch (e) {
     console.error('保存训练记录失败:', e)
     Taro.showToast({ title: '保存失败', icon: 'none' })

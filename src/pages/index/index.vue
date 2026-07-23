@@ -113,29 +113,41 @@
         </view>
       </view>
     </scroll-view>
+    
+    <!-- 成就弹窗 -->
+    <AchievementPopup />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import Taro, { usePullDownRefresh } from '@tarojs/taro'
+import Taro, { usePullDownRefresh, useDidShow } from '@tarojs/taro'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import MuscleCard from '@/components/MuscleCard/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import { useExerciseStore } from '@/store/exercise'
 import { useFavoriteStore } from '@/store/favorite'
 import { usePlanStore } from '@/store/plan'
+import { useAchievementStore } from '@/store/achievement'
 import { useShare } from '@/hooks/useShare'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 
 const exerciseStore = useExerciseStore()
 const favoriteStore = useFavoriteStore()
 const planStore = usePlanStore()
+const achievementStore = useAchievementStore()
 
 useShare({
   title: 'ExercisesPlayer - 专业健身动作库',
   path: '/pages/index/index',
+})
+
+// 页面显示时同步成就数据
+useDidShow(() => {
+  achievementStore.syncFromCloud()
+  achievementStore.checkAchievements()
 })
 
 const searchKeyword = ref('')
@@ -246,7 +258,6 @@ onMounted(() => {
 .home-refresh-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
   padding: 4px 10px;
   background: #f5f5f5;
   border-radius: 16px;
@@ -254,11 +265,13 @@ onMounted(() => {
 
 .home-refresh-icon {
   font-size: 14px;
+  margin-right: 4px;
 }
 
 .home-refresh-text {
   font-size: 12px;
   color: #666;
+  line-height: 1;
 }
 
 /* 统计卡片 */
@@ -337,7 +350,7 @@ onMounted(() => {
 /* 今日推荐 */
 .home-recommend-scroll {
   width: 100%;
-  height: 280px;
+  height: 255px;
   white-space: nowrap;
 }
 

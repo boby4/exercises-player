@@ -17,6 +17,9 @@
     <view v-if="favoriteStore.count > 0" class="stats-bar">
       <text class="stats-text">共 {{ favoriteStore.count }} 个收藏</text>
     </view>
+    
+    <!-- 成就弹窗 -->
+    <AchievementPopup />
   </view>
 </template>
 
@@ -25,12 +28,15 @@ import { ref, computed } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import ExerciseCard from '@/components/ExerciseCard/index.vue'
 import IconFont from '@/components/IconFont/index.vue'
+import AchievementPopup from '@/components/AchievementPopup/index.vue'
 import { useFavoriteStore } from '@/store/favorite'
+import { useAchievementStore } from '@/store/achievement'
 import { useShare } from '@/hooks/useShare'
 import { getExerciseNameZh } from '@/utils/data'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS } from '@/types/exercise'
 
 const favoriteStore = useFavoriteStore()
+const achievementStore = useAchievementStore()
 const searchKeyword = ref('')
 
 useShare({

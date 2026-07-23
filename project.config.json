@@ -1,9 +1,11 @@
 {
   "miniprogramRoot": "dist-weapp/",
   "cloudfunctionRoot": "cloud/functions/",
+  "cloudbaseRoot": "cloud/functions/",
   "projectname": "exercises-player",
   "description": "ExercisesPlayer 离线健身动作库",
   "appid": "wxf2431002be6b06e2",
+  "cloudfunctionTemplateEnv": "cloudbase-d4gcmht1z6dda3d54",
   "setting": {
     "urlCheck": false,
     "es6": true,
