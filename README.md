@@ -4,6 +4,10 @@
 
 > 🌐 **线上地址**：[https://exercises-player.vercel.app](https://exercises-player.vercel.app)
 
+> 📱 **微信小程序**：
+
+![小程序二维码](https://i.mji.rip/2026/07/23/df60f8ca8acb05e26d9dd2828ead0670.jpeg)
+
 ## ✨ 功能特性
 
 ### 🏠 首页
